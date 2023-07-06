@@ -1,11 +1,8 @@
-/**
- * @license
- * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-
-import {LitElement, html, css} from 'lit';
+import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
+import Style from './sbb-element.scss';
+import { TestController } from './controller';
+
 
 /**
  * An example element.
@@ -16,14 +13,7 @@ import {customElement, property} from 'lit/decorators.js';
  */
 @customElement('my-element')
 export class MyElement extends LitElement {
-  static override styles = css`
-    :host {
-      display: block;
-      border: solid 1px gray;
-      padding: 16px;
-      max-width: 800px;
-    }
-  `;
+  static override styles = Style;
 
   /**
    * The name to say "Hello" to.
@@ -44,19 +34,17 @@ export class MyElement extends LitElement {
 
   // Get/Set property
   private _prop = '';
-  @property()
-  public get setProperty() {
+  @property({attribute: 'property'})
+  public get property() {
     return this._prop;
   }
-  public set setProperty(value) {
+  public set property(value) {
     this.requestUpdate('setProperty', this._prop)
     this._prop = value;
   }
 
-//   private _testController!: TestController;
-  
-  // Or simply
-  //private _testController = new TestController(this);
+  // Init a Controller
+  private _testController = new TestController(this);
 
   /**
    * Public function doc
@@ -70,20 +58,20 @@ export class MyElement extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    // this._testController = new TestController(this);
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    // this.removeController(this._testController);
   }
 
   override render() {
+    this.setAttribute('data-state', 'initial');
     return html`
       <h1>${this._sayHello(this.name)}!</h1>
       <button @click=${this._onClick} part="button">
         Click Count: ${this.count}
       </button>
+      <div>Prop: ${this._prop}</div>
       <slot></slot>
     `;
   }
