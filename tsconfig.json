@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+      "target": "es2020",
+      "module": "es2020",
+      "lib": ["es2020", "DOM", "DOM.Iterable"],
+      "declaration": true,
+      "declarationMap": true,
+      "sourceMap": true,
+      "inlineSources": true,
+      "allowJs": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "moduleResolution": "node",
+      "experimentalDecorators": true,
+
+      /** linting **/
+      "useDefineForClassFields": false,
+      "forceConsistentCasingInFileNames": true,
+      "noImplicitOverride": true,
+
+      "plugins": [
+        {
+          "name": "ts-lit-plugin",
+          "strict": true
+        }
+      ]
+    },
+    "include": ["./src/**/*"]
+  }

@@ -1,0 +1,41 @@
+{
+  "name": "lit-elements-poc",
+  "version": "1.0.0",
+  "description": "TODO",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "storybook": "storybook dev -p 6006",
+    "storybook:build": "storybook build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lyne-design-system/lit-elements-poc.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lyne-design-system/lit-elements-poc/issues"
+  },
+  "homepage": "https://github.com/lyne-design-system/lit-elements-poc#readme",
+  "dependencies": {
+    "lit": "^2.7.5"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.0",
+    "@babel/plugin-proposal-class-properties": "^7.12.0",
+    "@babel/plugin-proposal-decorators": "^7.12.0",
+    "@babel/preset-typescript": "^7.22.5",
+    "@storybook/addon-essentials": "^7.0.25",
+    "@storybook/addon-links": "^7.0.25",
+    "@storybook/blocks": "^7.0.25",
+    "@storybook/web-components": "^7.0.25",
+    "@storybook/web-components-webpack5": "^7.0.25",
+    "lit-analyzer": "^1.2.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "storybook": "^7.0.25",
+    "typescript": "^5.1.6"
+  }
+}
