@@ -70,7 +70,6 @@ export class MyElement extends LitElement {
 
   override connectedCallback(): void {
     super.connectedCallback();
-    console.log('connected')
     // this._testController = new TestController(this);
   }
 
