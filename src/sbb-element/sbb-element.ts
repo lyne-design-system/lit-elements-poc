@@ -1,7 +1,7 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import Style from './sbb-element.scss';
 import { TestController } from './controller';
+import Style from './sbb-element.scss';
 
 
 /**
@@ -13,7 +13,8 @@ import { TestController } from './controller';
  */
 @customElement('my-element')
 export class MyElement extends LitElement {
-  static override styles = Style;
+  // static override styles = Style;
+  static override styles = [];
 
   /**
    * The name to say "Hello" to.
@@ -71,7 +72,7 @@ export class MyElement extends LitElement {
       <button @click=${this._onClick} part="button">
         Click Count: ${this.count}
       </button>
-      <div>Prop: ${this._prop}</div>
+      <div class="prop-display">Prop: ${this._prop}</div>
       <slot></slot>
     `;
   }
