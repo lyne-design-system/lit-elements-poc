@@ -14,12 +14,13 @@ const config: StorybookConfig = {
   async webpackFinal(config, { configType }) {
     
     config.module?.rules?.push({
-      test: /\.scss$/,
-      loader: 'lit-css-loader',
-      options: {
-          transform: (data, { filePath }) =>
-            Sass.renderSync({ data, file: filePath }).css.toString(),
-      }
+      test: /\.css|\.s(c|a)ss$/,
+      use: [{
+          loader: 'lit-scss-loader',
+          options: {
+              minify: true, // defaults to false
+          },
+      }, 'extract-loader', 'css-loader', 'sass-loader'],
     })
     
     return config;
