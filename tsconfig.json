@@ -26,5 +26,8 @@
         }
       ]
     },
-    "include": ["./src/**/*"]
+    "include": [
+      "./src/**/*",
+      "node_modules/lit-scss-loader/types.d.ts"
+    ]
   }

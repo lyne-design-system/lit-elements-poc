@@ -1,5 +1,4 @@
 import type { StorybookConfig } from "@storybook/web-components-webpack5";
-import Sass from 'sass';
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
@@ -18,7 +17,7 @@ const config: StorybookConfig = {
       use: [{
           loader: 'lit-scss-loader',
           options: {
-              minify: true, // defaults to false
+              minify: true,
           },
       }, 'extract-loader', 'css-loader', 'sass-loader'],
     })

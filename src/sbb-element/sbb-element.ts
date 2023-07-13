@@ -13,8 +13,8 @@ import Style from './sbb-element.scss';
  */
 @customElement('my-element')
 export class MyElement extends LitElement {
-  // static override styles = Style;
-  static override styles = [];
+  static override styles = Style;
+  // static override styles = [];
 
   /**
    * The name to say "Hello" to.
