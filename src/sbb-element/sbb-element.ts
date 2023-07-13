@@ -9,7 +9,6 @@ import Style from './sbb-element.scss';
  *
  * @fires count-changed - Indicates when the count changes
  * @slot - This element has a slot
- * @csspart button - The button
  */
 @customElement('my-element')
 export class MyElement extends LitElement {
@@ -20,13 +19,13 @@ export class MyElement extends LitElement {
    * The name to say "Hello" to.
    */
   @property()
-  name = 'World';
+  public name = 'World';
 
   /**
    * The number of times the button has been clicked.
    */
   @property({type: Number})
-  count = 0;
+  public count = 0;
 
   // Getter property
   public get getProperty(): string {
