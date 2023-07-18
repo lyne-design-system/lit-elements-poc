@@ -12,12 +12,16 @@
       "rootDir": "./src",
       "moduleResolution": "node",
       "experimentalDecorators": true,
+      "jsx": "react",
+      "jsxFactory": "h",
 
       /** linting **/
       "allowSyntheticDefaultImports": true,
       "useDefineForClassFields": false,
       "forceConsistentCasingInFileNames": true,
       "noImplicitOverride": true,
+
+      "types": ["jsx-dom"],
 
       "plugins": [
         {
