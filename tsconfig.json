@@ -21,7 +21,7 @@
       "forceConsistentCasingInFileNames": true,
       "noImplicitOverride": true,
 
-      "types": ["jsx-dom"],
+      "types": ["jsx-dom", "mocha"],
 
       "plugins": [
         {

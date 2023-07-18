@@ -6,10 +6,10 @@ const mode = process.env.MODE || 'dev';
 
 export default {
   rootDir: '.',
-  files: ['src/**/*.spec.ts', 'src/**/*.e2e.ts'],
+  files: ['src/**/*.spec.ts', 'src/**/*.e2e.ts', '!src/global/**/*.ts'],
   groups: [
-    {name: 'spec', files: 'src/**/*.spec.ts'},
-    {name: 'e2e', files: 'src/**/*.e2e.ts'}
+    {name: 'spec', files: ['src/**/*.spec.ts', '!src/global/**/*.ts']},
+    {name: 'e2e', files: ['src/**/*.e2e.ts', '!src/global/**/*.ts']}
   ],
   nodeResolve: true,
   reporters: [

@@ -1,7 +1,7 @@
 
 import { MyElement } from './sbb-element';
-import {expect, fixture} from '@open-wc/testing';
-import {html} from 'lit/static-html.js';
+import { expect, fixture } from '@open-wc/testing';
+import { html } from 'lit/static-html.js';
 
 describe('sbb-element', () => {
   let element: MyElement;
