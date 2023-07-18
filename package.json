@@ -13,6 +13,7 @@
     "test:spec": "wtr --group spec",
     "test:spec-snapshot": "wtr --group spec --update-snapshot",
     "test:e2e": "wtr --group e2e",
+    "start": "npm run storybook",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build"
   },
@@ -27,6 +28,7 @@
   },
   "homepage": "https://github.com/lyne-design-system/lit-elements-poc#readme",
   "dependencies": {
+    "@open-wc/lit-helpers": "^0.6.0",
     "lit": "^2.7.5"
   },
   "devDependencies": {
@@ -37,9 +39,11 @@
     "@custom-elements-manifest/analyzer": "^0.4.17",
     "@custom-elements-manifest/to-markdown": "^0.1.0",
     "@open-wc/testing": "^3.2.0",
+    "@sbb-esta/lyne-design-tokens": "^0.3.5",
     "@storybook/addon-essentials": "^7.0.26",
     "@storybook/addon-links": "^7.0.26",
     "@storybook/blocks": "^7.0.26",
+    "@storybook/html": "^7.0.27",
     "@storybook/web-components": "^7.0.26",
     "@storybook/web-components-webpack5": "^7.0.26",
     "@web/dev-server-esbuild": "^0.4.1",
