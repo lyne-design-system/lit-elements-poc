@@ -1,7 +1,7 @@
 import { spread } from '@open-wc/lit-helpers';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { forwardEventToHost } from '../global/helpers';
+import { forwardEventToHost } from '../global/helpers/eventing'; //TODO Investigate why test esbuild fail if the import is from '../global/helpers'
 import { focusInputElement } from '../global/helpers/input-element';
 import { FormAssociatedMixin } from '../global/form-associated-mixin';
 import Style from './sbb-time-input.scss';
