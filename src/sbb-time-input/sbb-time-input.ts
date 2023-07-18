@@ -1,56 +1,52 @@
-import {
-  Component,
-  ComponentInterface,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  JSX,
-  Prop,
-  Watch,
-} from '@stencil/core';
-import { forwardEventToHost } from '../../global/helpers';
-import { focusInputElement, inputElement } from '../../global/helpers/input-element';
+import { forwardEventToHost } from '../global/helpers';
+import { focusInputElement, inputElement } from '../global/helpers/input-element';
+import { spread } from '@open-wc/lit-helpers';
+import { LitElement, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
+import Style from './sbb-time-input.scss';
 
 const REGEX_PATTERN = /[0-9]{3,4}/;
 const REGEX_GROUPS_WITH_COLON = /([0-9]{1,2})?[.:,\-;_hH]?([0-9]{1,2})?/;
 const REGEX_GROUPS_WO_COLON = /([0-9]{1,2})([0-9]{2})/;
 
-@Component({
-  shadow: true,
-  styleUrl: 'sbb-time-input.scss',
-  tag: 'sbb-time-input',
-})
-export class SbbTimeInput implements ComponentInterface {
-  /** Value for the inner HTMLInputElement. */
-  @Prop({ mutable: true }) public value?: string = '';
+@customElement('sbb-time-input')
+export class SbbTimeInput extends LitElement {
+  static override styles = Style;
 
+  /** Value for the inner HTMLInputElement. */
+  @property() public get value(): string { return this._value };
+  
   /** Date value with the given time for the inner HTMLInputElement. */
-  @Prop({ mutable: true }) public valueAsDate?: Date = null;
+  // TODO this should not have an attribute probably
+  @property({attribute: 'value-as-date', type: Object}) 
+  public get valueAsDate(): Date { 
+    const regGroups = this._validateInput(this.value);
+    return this._formatValueAsDate(regGroups);
+  };
 
   /** The <form> element to associate the inner HTMLInputElement with. */
-  @Prop() public form?: string;
+  @property() public form?: string;
 
   /** Readonly state for the inner HTMLInputElement. */
-  @Prop() public readonly?: boolean = false;
+  @property({type: Boolean}) public readonly?: boolean = false;
 
   /** Disabled state for the inner HTMLInputElement. */
-  @Prop({ reflect: true }) public disabled?: boolean = false;
+  @property({type: Boolean}) public disabled?: boolean = false;
 
   /** Required state for the inner HTMLInputElement. */
-  @Prop() public required?: boolean = false;
+  @property({type: Boolean}) public required?: boolean = false;
 
   /**
    * @deprecated only used for React. Will probably be removed once React 19 is available.
    */
-  @Event({ bubbles: true, cancelable: true }) public didChange: EventEmitter;
+  // @Event({ bubbles: true, cancelable: true }) public didChange: EventEmitter;
 
   /** Host element */
-  @Element() private _element!: HTMLElement;
+  // @Element() private _element!: HTMLElement;
 
   /** Placeholder for the inner HTMLInputElement.*/
   private _placeholder = 'HH:MM';
+  private _value: string = '';
 
   /** Applies the correct format to values and triggers event dispatch. */
   private _updateValueAndEmitChange(event: Event): void {
@@ -64,15 +60,13 @@ export class SbbTimeInput implements ComponentInterface {
    */
   private _updateValue(value: string): void {
     const regGroups = this._validateInput(value);
-    this.value = this._formatValue(regGroups);
-    this.valueAsDate = this._formatValueAsDate(regGroups);
-    inputElement(this._element).value = this.value;
+    this._value = this._formatValue(regGroups);
   }
 
   /** Emits the change event. */
   private _emitChange(event: Event): void {
-    forwardEventToHost(event, this._element);
-    this.didChange.emit();
+    forwardEventToHost(event, this);
+    this.dispatchEvent(new Event('did-change', {composed: true, cancelable: true}))
   }
 
   /** Returns the right format for the `value` property . */
@@ -134,18 +128,21 @@ export class SbbTimeInput implements ComponentInterface {
     (event.target as HTMLInputElement).value = match ? match[0] : null;
   }
 
-  public connectedCallback(): void {
+  override connectedCallback(): void {
+    super.connectedCallback();
     // Forward focus call to input element
-    this._element.focus = focusInputElement;
+    this.focus = focusInputElement; // we could also override focus() directly
   }
 
-  @Watch('value')
-  public watchValueChange(newValue: string): void {
+  // @Watch('value')
+  public set value(newValue: string) {
+    const oldValue = this._value;
     this._updateValue(newValue);
+    this.requestUpdate('value', oldValue);
   }
 
-  @Watch('valueAsDate')
-  public watchValueAsDateChange(newValue: Date): void {
+  // @Watch('valueAsDate')
+  public set valueAsDate(newValue: Date) {
     if (!newValue) {
       return;
     }
@@ -155,33 +152,36 @@ export class SbbTimeInput implements ComponentInterface {
     this.value = this._formatValue(
       this._validateInput(`${newValue.getHours()}:${newValue.getMinutes()}`)
     );
-    inputElement(this._element).value = this.value;
   }
 
-  public render(): JSX.Element {
-    const hostAttributes = {
-      role: 'input',
-      'aria-required': this.required?.toString() ?? 'false',
-      'aria-readonly': this.readonly?.toString() ?? 'false',
-      'aria-disabled': this.disabled?.toString() ?? 'false',
-    };
+  override render() {
+    this.setAttribute('role', 'input')
+    this.setAttribute('aria-required', this.required?.toString() ?? 'false')
+    this.setAttribute('aria-readonly', this.readonly?.toString() ?? 'false')
+    this.setAttribute('aria-disabled', this.disabled?.toString() ?? 'false')
+
     const inputAttributes = {
       role: 'presentation',
       disabled: this.disabled || null,
       readonly: this.readonly || null,
       required: this.required || null,
-      value: this._formatValue(this._validateInput(this.value)) || null,
+      value: this.value || null,
       placeholder: this._placeholder,
     };
-    return (
-      <Host {...hostAttributes}>
-        <input
-          type="text"
-          {...inputAttributes}
-          onInput={(event: InputEvent) => this._preventCharInsert(event)}
-          onChange={(event: Event) => this._updateValueAndEmitChange(event)}
-        />
-      </Host>
-    );
+    
+    return html`
+      <input
+        type="text"
+        ${spread(inputAttributes)}
+        @input="${(event: InputEvent) => this._preventCharInsert(event)}"
+        @change="${(event: Event) => this._updateValueAndEmitChange(event)}"
+      />
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'sbb-time-input': SbbTimeInput;
   }
 }

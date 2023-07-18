@@ -4,6 +4,9 @@ import readme from './readme.md';
 import { withActions } from '@storybook/addon-actions/decorator';
 import type { Meta, StoryObj, ArgTypes, Args, Decorator } from '@storybook/html';
 import type { InputType } from '@storybook/types';
+import { SbbTimeInput } from './sbb-time-input';
+
+const a = new SbbTimeInput();
 
 const changeEventHandler = (event): void => {
   const div = document.createElement('div');
@@ -189,48 +192,48 @@ const TemplateSbbTimeInput = ({
   ...args
 }): JSX.Element => (
   <Fragment>
-    <sbb-form-field
+    {/* <sbb-form-field
       size={size}
       label={label}
       optional={optional}
       borderless={borderless}
       width="collapse"
     >
-      {iconStart && <sbb-icon slot="prefix" name={iconStart} />}
+      {iconStart && <sbb-icon slot="prefix" name={iconStart} />} */}
       <sbb-time-input
         class={errorClass}
         {...args}
         onChange={(event) => changeEventHandler(event)}
       ></sbb-time-input>
-      {iconEnd && <sbb-icon slot="suffix" name={iconEnd} />}
-      {errorClass && <sbb-form-error>Error</sbb-form-error>}
-    </sbb-form-field>
+      {/* {iconEnd && <sbb-icon slot="suffix" name={iconEnd} />}
+      {errorClass && <sbb-form-error>Error</sbb-form-error>} */}
+    {/* </sbb-form-field> */}
     <div style={{ display: 'flex', gap: '1em', 'margin-block-start': '2rem' }}>
-      <sbb-button variant="secondary" size="m" onClick={() => setValueAsDate()}>
+      <button variant="secondary" size="m" onClick={() => setValueAsDate()}>
         Set valueAsDate to current datetime
-      </sbb-button>
-      <sbb-button variant="secondary" size="m" onClick={() => setValue()}>
+      </button>
+      <button variant="secondary" size="m" onClick={() => setValue()}>
         Set value to 0
-      </sbb-button>
+      </button>
     </div>
     <div style={{ 'margin-block-start': '1rem' }}>Change time in input:</div>
     <div id="container-value"></div>
   </Fragment>
 );
 
-export const SbbTimeInput: StoryObj = {
+export const TimeInput: StoryObj = {
   render: TemplateSbbTimeInput,
   argTypes: { ...formFieldBasicArgsTypes },
   args: { ...formFieldBasicArgs },
 };
 
-export const SbbTimeInputWithIcons: StoryObj = {
+export const WithIcons: StoryObj = {
   render: TemplateSbbTimeInput,
   argTypes: { ...formFieldBasicArgsTypes },
   args: { ...formFieldBasicArgsWithIcons },
 };
 
-export const SbbTimeInputBorderless: StoryObj = {
+export const Borderless: StoryObj = {
   render: TemplateSbbTimeInput,
   argTypes: { ...formFieldBasicArgsTypes },
   args: {
@@ -239,7 +242,7 @@ export const SbbTimeInputBorderless: StoryObj = {
   },
 };
 
-export const SbbTimeInputDisabled: StoryObj = {
+export const Disabled: StoryObj = {
   render: TemplateSbbTimeInput,
   argTypes: { ...formFieldBasicArgsTypes },
   args: {
@@ -248,7 +251,7 @@ export const SbbTimeInputDisabled: StoryObj = {
   },
 };
 
-export const SbbTimeInputReadonly: StoryObj = {
+export const Readonly: StoryObj = {
   render: TemplateSbbTimeInput,
   argTypes: { ...formFieldBasicArgsTypes },
   args: {
@@ -257,7 +260,7 @@ export const SbbTimeInputReadonly: StoryObj = {
   },
 };
 
-export const SbbTimeInputWithError: StoryObj = {
+export const WithError: StoryObj = {
   render: TemplateSbbTimeInput,
   argTypes: { ...formFieldBasicArgsTypes },
   args: {
