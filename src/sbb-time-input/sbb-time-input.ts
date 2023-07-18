@@ -1,8 +1,9 @@
-import { forwardEventToHost } from '../global/helpers';
-import { focusInputElement, inputElement } from '../global/helpers/input-element';
 import { spread } from '@open-wc/lit-helpers';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
+import { forwardEventToHost } from '../global/helpers';
+import { focusInputElement } from '../global/helpers/input-element';
+import { FormAssociatedMixin } from '../global/form-associated-mixin';
 import Style from './sbb-time-input.scss';
 
 const REGEX_PATTERN = /[0-9]{3,4}/;
@@ -10,22 +11,21 @@ const REGEX_GROUPS_WITH_COLON = /([0-9]{1,2})?[.:,\-;_hH]?([0-9]{1,2})?/;
 const REGEX_GROUPS_WO_COLON = /([0-9]{1,2})([0-9]{2})/;
 
 @customElement('sbb-time-input')
-export class SbbTimeInput extends LitElement {
+export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   static override styles = Style;
 
   /** Value for the inner HTMLInputElement. */
-  @property() public get value(): string { return this._value };
+  @property() public override get value(): string { return this._value };
   
   /** Date value with the given time for the inner HTMLInputElement. */
-  // TODO this should not have an attribute probably
-  @property({attribute: 'value-as-date', type: Object}) 
+  @property({attribute: 'value-as-date', type: Object}) // TODO this should not have an attribute probably
   public get valueAsDate(): Date { 
     const regGroups = this._validateInput(this.value);
     return this._formatValueAsDate(regGroups);
   };
 
   /** The <form> element to associate the inner HTMLInputElement with. */
-  @property() public form?: string;
+  // @property() public form?: string;
 
   /** Readonly state for the inner HTMLInputElement. */
   @property({type: Boolean}) public readonly?: boolean = false;
@@ -50,7 +50,7 @@ export class SbbTimeInput extends LitElement {
 
   /** Applies the correct format to values and triggers event dispatch. */
   private _updateValueAndEmitChange(event: Event): void {
-    this._updateValue((event.target as HTMLInputElement).value);
+    this.value = (event.target as HTMLInputElement).value;
     this._emitChange(event);
   }
 
@@ -58,10 +58,10 @@ export class SbbTimeInput extends LitElement {
    * Updates `value` and `valueAsDate`. The direct update on the `_inputElement` is required
    * to force the input change when the typed value is the same of the current one.
    */
-  private _updateValue(value: string): void {
-    const regGroups = this._validateInput(value);
-    this._value = this._formatValue(regGroups);
-  }
+  // private _updateValue(value: string): void {
+  //   const regGroups = this._validateInput(value);
+  //   this._value = this._formatValue(regGroups);
+  // }
 
   /** Emits the change event. */
   private _emitChange(event: Event): void {
@@ -135,9 +135,12 @@ export class SbbTimeInput extends LitElement {
   }
 
   // @Watch('value')
-  public set value(newValue: string) {
+  public override set value(newValue: string) {
     const oldValue = this._value;
-    this._updateValue(newValue);
+    const regGroups = this._validateInput(newValue);
+    this._value = this._formatValue(regGroups);
+
+    this.internals.setFormValue(this._value); // Necessary to be recognized as a native form element
     this.requestUpdate('value', oldValue);
   }
 

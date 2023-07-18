@@ -192,32 +192,35 @@ const TemplateSbbTimeInput = ({
   ...args
 }): JSX.Element => (
   <Fragment>
-    {/* <sbb-form-field
-      size={size}
-      label={label}
-      optional={optional}
-      borderless={borderless}
-      width="collapse"
-    >
-      {iconStart && <sbb-icon slot="prefix" name={iconStart} />} */}
-      <sbb-time-input
-        class={errorClass}
-        {...args}
-        onChange={(event) => changeEventHandler(event)}
-      ></sbb-time-input>
-      {/* {iconEnd && <sbb-icon slot="suffix" name={iconEnd} />}
-      {errorClass && <sbb-form-error>Error</sbb-form-error>} */}
-    {/* </sbb-form-field> */}
-    <div style={{ display: 'flex', gap: '1em', 'margin-block-start': '2rem' }}>
-      <button variant="secondary" size="m" onClick={() => setValueAsDate()}>
-        Set valueAsDate to current datetime
-      </button>
-      <button variant="secondary" size="m" onClick={() => setValue()}>
-        Set value to 0
-      </button>
-    </div>
-    <div style={{ 'margin-block-start': '1rem' }}>Change time in input:</div>
-    <div id="container-value"></div>
+    <form target="_blank" onSubmit={(data) => console.log(data)}>
+      {/* <sbb-form-field
+        size={size}
+        label={label}
+        optional={optional}
+        borderless={borderless}
+        width="collapse"
+      >
+        {iconStart && <sbb-icon slot="prefix" name={iconStart} />} */}
+        <sbb-time-input
+          class={errorClass}
+          {...args}
+          name="time-input"
+          onChange={(event) => changeEventHandler(event)}
+        ></sbb-time-input>
+        {/* {iconEnd && <sbb-icon slot="suffix" name={iconEnd} />}
+        {errorClass && <sbb-form-error>Error</sbb-form-error>} */}
+      {/* </sbb-form-field> */}
+      <div style={{ display: 'flex', gap: '1em', 'margin-block-start': '2rem' }}>
+        <button variant="secondary" size="m" type="button" onClick={() => setValueAsDate()}>
+          Set valueAsDate to current datetime
+        </button>
+        <button variant="secondary" size="m" type="button" onClick={() => setValue()}>
+          Set value to 0
+        </button>
+      </div>
+      <div style={{ 'margin-block-start': '1rem' }}>Change time in input:</div>
+      <div id="container-value"></div>
+    </form>
   </Fragment>
 );
 
