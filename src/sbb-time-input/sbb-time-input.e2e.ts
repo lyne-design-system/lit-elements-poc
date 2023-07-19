@@ -1,69 +1,75 @@
 // import { E2EElement, E2EPage, newE2EPage } from '@stencil/core/testing';
+import { assert, expect, fixture, oneEvent, waitUntil } from "@open-wc/testing";
+import { html } from 'lit/static-html.js';
+import { SbbTimeInput } from "./sbb-time-input";
+import { sendKeys } from "@web/test-runner-commands";
 
-// describe('sbb-time-input', () => {
-//   let element: E2EElement, page: E2EPage;
+describe('sbb-time-input', () => {
+  let element: SbbTimeInput;
+  let input: HTMLInputElement;
 
-//   beforeEach(async () => {
-//     page = await newE2EPage();
-//     await page.setContent(`
-//       <sbb-time-input></sbb-time-input>
-//       <button id="trigger-change"></button>
-//     `);
-//     element = await page.find('sbb-time-input');
-//     await page.waitForChanges();
-//   });
+  beforeEach(async () => {
+    element = await fixture(html`
+        <sbb-time-input></sbb-time-input>
+    `);
+    input = element.shadowRoot.querySelector('input');
+  });
 
-//   it('renders', async () => {
-//     expect(element).toHaveClass('hydrated');
-//   });
+  it('is defined', () => {
+    assert.instanceOf(element, SbbTimeInput);
+  });
 
-//   it('should emit event', async () => {
-//     const changeSpy = await element.spyOnEvent('change');
-//     const input = await page.find('sbb-time-input >>> input');
-//     await input.focus();
-//     await input.press('1');
-//     await page.click('#trigger-change');
-//     await page.waitForChanges();
-//     expect(changeSpy).toHaveReceivedEvent();
-//   });
+  it('should emit event', async () => {
+    input.focus();
 
-//   it('should watch for value changes', async () => {
-//     element.setProperty('value', '11');
-//     await page.waitForChanges();
-//     const input = await page.find('sbb-time-input >>> input');
-//     expect(await input.getProperty('value')).toEqual('11:00');
-//   });
+    await sendKeys({ type: '1' });
 
-//   it('should watch for value changes and interpret valid values', async () => {
-//     element.setProperty('value', ':00');
-//     await page.waitForChanges();
-//     const input = await page.find('sbb-time-input >>> input');
-//     expect(await input.getProperty('value')).toEqual('00:00');
-//   });
+    setTimeout(async () => await sendKeys({ press: 'Tab' }))
 
-//   it('should watch for value changes and clear invalid values', async () => {
-//     element.setProperty('value', ':');
-//     await page.waitForChanges();
-//     const input = await page.find('sbb-time-input >>> input');
-//     expect(await input.getProperty('value')).toEqual('');
-//   });
+    await oneEvent(element, 'change');
+  });
 
-//   it('should handle delete correctly', async () => {
-//     element.setProperty('value', '12:00');
-//     await page.waitForChanges();
-//     const input = await page.find('sbb-time-input >>> input');
-//     await input.press('Home');
-//     await input.press('Delete');
-//     await input.press('Delete');
-//     expect(await input.getProperty('value')).toEqual(':00');
-//     await input.press('Enter');
-//     expect(await input.getProperty('value')).toEqual('00:00');
-//   });
+  it('should watch for value changes', async () => {
+    element.value = '11';
+    
+    await element.updateComplete;
+    
+    expect(input.value).to.be.equal('11:00');
+  });
 
-//   it('should watch for valueAsDate changes', async () => {
-//     element.setProperty('valueAsDate', '2023-01-01T15:00:00');
-//     await page.waitForChanges();
-//     const input = await page.find('sbb-time-input >>> input');
-//     expect(await input.getProperty('value')).toEqual('15:00');
-//   });
-// });
+  it('should watch for value changes and interpret valid values', async () => {
+    element.value = ':00';
+
+    await element.updateComplete;
+
+    expect(input.value).to.be.equal('00:00');
+  });
+
+  it('should watch for value changes and clear invalid values', async () => {
+    element.value = ':'
+    await element.updateComplete;
+    expect(input.value).to.be.equal('');
+  });
+
+  it('should handle delete correctly', async () => {
+    element.value = '12:00';
+    await element.updateComplete;
+
+    input.focus();
+    await sendKeys({press: 'Home'})
+    await sendKeys({press: 'Delete'})
+    await sendKeys({press: 'Delete'})
+
+    expect(input.value).to.be.equal(':00');
+
+    await sendKeys({press: 'Enter'})
+
+    expect(input.value).to.be.equal('00:00');
+  });
+
+  it('should watch for valueAsDate changes', async () => {
+    element.valueAsDate = '2023-01-01T15:00:00';
+    await element.updateComplete;
+    expect(await input.value).to.be.equal('15:00');
+  });
+});

@@ -43,6 +43,5 @@ describe('sbb-toast', () => {
     setTimeout(() => btn.click());
 
     await oneEvent(element, 'count-changed');
-    expect(true).to.be.true;
   })
 });

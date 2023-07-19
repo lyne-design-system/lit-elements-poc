@@ -2,7 +2,7 @@ import { spread } from '@open-wc/lit-helpers';
 import { LitElement, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { forwardEventToHost } from '../global/helpers/eventing'; //TODO Investigate why test esbuild fail if the import is from '../global/helpers'
-import { focusInputElement } from '../global/helpers/input-element';
+import { focusInputElement, inputElement } from '../global/helpers/input-element';
 import { FormAssociatedMixin } from '../global/form-associated-mixin';
 import Style from './sbb-time-input.scss';
 
@@ -51,6 +51,7 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   /** Applies the correct format to values and triggers event dispatch. */
   private _updateValueAndEmitChange(event: Event): void {
     this.value = (event.target as HTMLInputElement).value;
+    inputElement(this).value = this.value;
     this._emitChange(event);
   }
 
@@ -145,7 +146,7 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   }
 
   // @Watch('valueAsDate')
-  public set valueAsDate(newValue: Date) {
+  public set valueAsDate(newValue: Date | string) {
     if (!newValue) {
       return;
     }
