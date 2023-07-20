@@ -15,9 +15,21 @@ const config: StorybookConfig = {
     autodocs: true,
   },
   async webpackFinal(config, { configType }) {
+
+    config.module?.rules?.push({
+      test: /global.scss$/,
+      use: [
+        "style-loader",
+        "css-loader",
+        "sass-loader",
+      ],
+    })
     
     config.module?.rules?.push({
       test: /\.css|\.s(c|a)ss$/,
+      exclude: [
+        /global.scss$/,
+      ],
       use: [{
           loader: 'lit-scss-loader',
           options: {
