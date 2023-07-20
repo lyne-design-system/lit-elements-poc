@@ -6,7 +6,7 @@ const mode = process.env.MODE || 'dev';
 
 export default {
   rootDir: '.',
-  files: ['src/**/*.spec.ts', 'src/**/*.e2e.ts', '!src/global/**/*.ts'],
+  files: ['src/**/*.spec.ts', 'src/**/*.e2e.ts', '!src/global/**/*.ts'], // the global folder is temporary excluded until we migrate its tests
   groups: [
     {name: 'spec', files: ['src/**/*.spec.ts', '!src/global/**/*.ts']},
     {name: 'e2e', files: ['src/**/*.e2e.ts', '!src/global/**/*.ts']}
