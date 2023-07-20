@@ -6,3 +6,17 @@
 export function isValidAttribute(element: HTMLElement, attribute: string): boolean {
   return element.hasAttribute(attribute) && element.getAttribute(attribute) !== 'false';
 }
+
+/**
+ * Set the attribute only if value is not 'false'
+ * @param element The element that will have the attribute
+ * @param attribute The attribute name
+ * @param value The attribute value
+ */
+export function setOptionalAttribute(element: HTMLElement, attribute: string, value: any) {
+  if (value) {
+    element.setAttribute(attribute, value);
+  } else {
+    element.removeAttribute(attribute);
+  }
+}

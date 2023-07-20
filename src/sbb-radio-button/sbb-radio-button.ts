@@ -1,24 +1,9 @@
-import {
-  Component,
-  ComponentInterface,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  JSX,
-  Listen,
-  Method,
-  Prop,
-  State,
-  Watch,
-} from '@stencil/core';
-import { AgnosticMutationObserver as MutationObserver } from '../../global/helpers/mutation-observer';
+import { AgnosticMutationObserver as MutationObserver } from '../global/helpers/mutation-observer';
 import {
   InterfaceSbbRadioButtonAttributes,
   RadioButtonStateChange,
 } from './sbb-radio-button.custom';
-import { isValidAttribute } from '../../global/helpers/is-valid-attribute';
+import { isValidAttribute, setOptionalAttribute } from '../global/helpers/is-valid-attribute';
 import {
   createNamedSlotState,
   documentLanguage,
@@ -26,8 +11,11 @@ import {
   HandlerRepository,
   languageChangeHandlerAspect,
   namedSlotChangeHandlerAspect,
-} from '../../global/helpers';
-import { i18nCollapsed, i18nExpanded } from '../../global/i18n';
+} from '../global/helpers';
+import { i18nCollapsed, i18nExpanded } from '../global/i18n';
+import { LitElement, html, nothing } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import Style from './sbb-radio-button.scss';
 
 /** Configuration for the attribute to look at if component is nested in a sbb-radio-button-group */
 const radioButtonObserverConfig: MutationObserverInit = {
@@ -39,110 +27,128 @@ const radioButtonObserverConfig: MutationObserverInit = {
  * @slot subtext - Slot used to render a subtext under the label (only visible within a selection panel).
  * @slot suffix - Slot used to render additional content after the label (only visible within a selection panel).
  */
-@Component({
-  shadow: true,
-  styleUrl: 'sbb-radio-button.scss',
-  tag: 'sbb-radio-button',
-})
-export class SbbRadioButton implements ComponentInterface {
+@customElement('sbb-radio-button')
+export class SbbRadioButton extends LitElement {
+  static override styles = Style;
+
   /**
    * Whether the radio can be deselected.
    */
-  @Prop() public allowEmptySelection = false;
+  @property({ attribute: 'allow-empty-selection', type: Boolean }) 
+  public allowEmptySelection = false;
 
   /**
    * Value of radio button.
    */
-  @Prop() public value: string;
+  @property() public value: string;
 
   /**
    * Whether the radio button is disabled.
    */
-  @Prop({ reflect: true }) public disabled = false;
+  @property({ reflect: true, type: Boolean }) 
+  public get disabled(): boolean {
+    return this._disabled;
+  }
 
   /**
    * Whether the radio button is required.
    */
-  @Prop() public required = false;
+  @property({ type: Boolean }) public required = false;
 
   /**
    * Whether the radio button is checked.
    */
-  @Prop({ mutable: true, reflect: true }) public checked = false;
+  @property({ reflect: true, type: Boolean }) 
+  public get checked() {
+    return this._checked;
+  }
 
   /**
    * Label size variant, either m or s.
    */
-  @Prop({ reflect: true, mutable: true }) public size: InterfaceSbbRadioButtonAttributes['size'] =
+  @property({ reflect: true }) public size: InterfaceSbbRadioButtonAttributes['size'] =
     'm';
 
   /**
    * Whether the component must be set disabled due disabled attribute on sbb-radio-button-group.
    */
-  @State() private _disabledFromGroup = false;
+  @state() private _disabledFromGroup = false;
 
   /**
    * Whether the component must be set required due required attribute on sbb-radio-button-group.
    */
-  @State() private _requiredFromGroup = false;
+  @state() private _requiredFromGroup = false;
 
   /**
    * State of listed named slots, by indicating whether any element for a named slot is defined.
    */
-  @State() private _namedSlots = createNamedSlotState('subtext', 'suffix');
+  @state() private _namedSlots = createNamedSlotState('subtext', 'suffix');
 
   /**
    * Whether the input is the main input of a selection panel.
    */
-  @State() private _isSelectionPanelInput = false;
+  @state() private _isSelectionPanelInput = false;
 
   /**
    * The label describing whether the selection panel is expanded (for screen readers only).
    */
-  @State() private _selectionPanelExpandedLabel: string;
+  @state() private _selectionPanelExpandedLabel: string;
 
-  @State() private _currentLanguage = documentLanguage();
+  @state() private _currentLanguage = documentLanguage();
 
+  private _disabled = false;
+  private _checked = false;
   private _selectionPanelElement: HTMLElement;
   private _radioButtonAttributeObserver = new MutationObserver(
     this._onRadioButtonAttributesChange.bind(this)
   );
 
-  @Element() private _element!: HTMLElement;
+  private get _element(): HTMLElement {
+    return this;
+  }
 
   /**
    * Internal event that emits whenever the state of the radio option
    * in relation to the parent selection panel changes.
    */
-  @Event({
-    bubbles: true,
-    eventName: 'state-change',
-  })
-  public stateChange: EventEmitter<RadioButtonStateChange>;
+  // @Event({
+  //   bubbles: true,
+  //   eventName: 'state-change',
+  // })
+  // public stateChange: EventEmitter<RadioButtonStateChange>;
 
-  @Watch('checked')
-  public handleCheckedChange(currentValue: boolean, previousValue: boolean): void {
-    if (currentValue !== previousValue) {
-      this.stateChange.emit({ type: 'checked', checked: currentValue });
-      !!this._selectionPanelElement && this._updateExpandedLabel();
-    }
+  
+  public set checked(value) {
+    if(this._checked === value) 
+      return;
+
+    this._checked = value;
+    this.requestUpdate() // if we use a setter, we need to manually call the 'requestUpdate()' method
+    this.dispatchEvent(new CustomEvent('state-change', {bubbles: true, detail: { type: 'checked', checked: this._checked }}))
+    !!this._selectionPanelElement && this._updateExpandedLabel();
   }
 
-  @Watch('disabled')
-  public handleDisabledChange(currentValue: boolean, previousValue: boolean): void {
-    if (currentValue !== previousValue) {
-      this.stateChange.emit({ type: 'disabled', disabled: currentValue });
-    }
+  public set disabled(value) {
+    if(this._disabled === value) 
+      return;
+
+    this._disabled = value;
+    this.requestUpdate()
+    this.dispatchEvent(new CustomEvent('state-change', {bubbles: true, detail: { type: 'disabled', disabled: this._disabled }}))
   }
 
-  @Listen('click')
-  public async handleClick(event: Event): Promise<void> {
+  constructor() {
+    super();
+    this.addEventListener('click', (e) => this.handleClick(e));
+    this.addEventListener('keydown', (e) => this.handleKeyDown(e));
+  }
+
+  public handleClick(event: Event) {
     event.preventDefault();
-    await this.select();
+    this.select();
   }
 
-  @Method()
-  public async select(): Promise<void> {
+  public select(): Promise<void> {
     if (this.disabled || this._disabledFromGroup) {
       return;
     }
@@ -161,7 +167,8 @@ export class SbbRadioButton implements ComponentInterface {
     formElementHandlerAspect
   );
 
-  public connectedCallback(): void {
+  override connectedCallback(): void {
+    super.connectedCallback();
     this._handlerRepository.connect();
     // We can use closest here, as we expect the parent sbb-selection-panel to be in light DOM.
     this._selectionPanelElement = this._element.closest('sbb-selection-panel');
@@ -171,16 +178,17 @@ export class SbbRadioButton implements ComponentInterface {
     this._setupInitialStateAndAttributeObserver();
   }
 
-  public componentDidLoad(): void {
+  override firstUpdated(): void {
+    super.firstUpdated(null);
     !!this._selectionPanelElement && this._updateExpandedLabel();
   }
 
-  public disconnectedCallback(): void {
+  override disconnectedCallback(): void {
+    super.disconnectedCallback();
     this._handlerRepository.disconnect();
     this._radioButtonAttributeObserver.disconnect();
   }
 
-  @Listen('keydown')
   public async handleKeyDown(evt: KeyboardEvent): Promise<void> {
     if (evt.code === 'Space') {
       await this.select();
@@ -189,7 +197,7 @@ export class SbbRadioButton implements ComponentInterface {
 
   // Set up the initial disabled/required values and start observe attributes changes.
   private _setupInitialStateAndAttributeObserver(): void {
-    const parentGroup = this._element.closest('sbb-radio-button-group');
+    const parentGroup = this._element.closest('sbb-radio-button-group') as any; // TODO remove this when the radio group is migrated
     if (parentGroup) {
       this._requiredFromGroup = isValidAttribute(parentGroup, 'required');
       this._disabledFromGroup = isValidAttribute(parentGroup, 'disabled');
@@ -220,40 +228,44 @@ export class SbbRadioButton implements ComponentInterface {
       : ', ' + i18nCollapsed[this._currentLanguage];
   }
 
-  public render(): JSX.Element {
-    const attributes = {
-      role: 'radio',
-      'aria-checked': this.checked?.toString() ?? 'false',
-      'aria-required': (this.required || this._requiredFromGroup).toString(),
-      'aria-disabled': (this.disabled || this._disabledFromGroup).toString(),
-      'data-is-selection-panel-input': this._isSelectionPanelInput,
-    };
-    return (
-      <Host {...attributes}>
-        <label class="sbb-radio-button">
-          <input
-            type="radio"
-            aria-hidden="true"
-            tabindex="-1"
-            disabled={this.disabled || this._disabledFromGroup}
-            required={this.required || this._requiredFromGroup}
-            checked={this.checked}
-            value={this.value}
-            class="sbb-radio-button__input"
-          />
-          <span class="sbb-radio-button__label-slot">
-            <slot />
-            {!!this._selectionPanelElement && this._namedSlots['suffix'] && <slot name="suffix" />}
-          </span>
-          {!!this._selectionPanelElement && this._namedSlots['subtext'] && <slot name="subtext" />}
-          {!!this._selectionPanelElement && this._selectionPanelExpandedLabel && (
-            /* For screen readers only */
-            <span class="sbb-radio-button__expanded-label">
-              {this._selectionPanelExpandedLabel}
-            </span>
-          )}
-        </label>
-      </Host>
-    );
+  override render() {
+    this.setAttribute('role', 'radio')
+    this.setAttribute('aria-checked', (!!this._checked).toString())
+    this.setAttribute('aria-required', (this.required || this._requiredFromGroup).toString());
+    this.setAttribute('aria-disabled', (this.disabled || this._disabledFromGroup).toString());
+    setOptionalAttribute(this, 'data-is-selection-panel-input', this._isSelectionPanelInput);
+
+    return html`
+      <label class="sbb-radio-button">
+        <input
+          type="radio"
+          aria-hidden="true"
+          tabindex="-1"
+          disabled=${this.disabled || this._disabledFromGroup || nothing}
+          required=${this.required || this._requiredFromGroup || nothing}
+          checked=${this.checked || nothing}
+          value=${this.value || nothing}
+          class="sbb-radio-button__input"
+        />
+        <span class="sbb-radio-button__label-slot">
+          <slot />
+          ${!!this._selectionPanelElement && this._namedSlots['suffix'] ? html`<slot name="suffix" />` : nothing}
+        </span>
+        ${!!this._selectionPanelElement && this._namedSlots['subtext'] ? html`<slot name="subtext" />` : nothing}
+        ${!!this._selectionPanelElement && this._selectionPanelExpandedLabel 
+          ? ( html`
+          <!-- For screen readers only -->
+          <span class="sbb-radio-button__expanded-label">
+            ${this._selectionPanelExpandedLabel}
+          </span>`
+        ) : nothing}
+      </label>
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'sbb-radio-button': SbbRadioButton;
   }
 }

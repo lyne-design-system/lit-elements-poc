@@ -160,9 +160,9 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
 
   override render() {
     this.setAttribute('role', 'input')
-    this.setAttribute('aria-required', this.required?.toString() ?? 'false')
-    this.setAttribute('aria-readonly', this.readonly?.toString() ?? 'false')
-    this.setAttribute('aria-disabled', this.disabled?.toString() ?? 'false')
+    this.setAttribute('aria-required', this.required?.toString() ?? 'false'); // The "?? 'false'" is redundant in this case
+    this.setAttribute('aria-readonly', (!!this.readonly).toString());         // a cleaner way to have the same behaviour
+    this.setAttribute('aria-disabled', (!!this.disabled).toString());
 
     const inputAttributes = {
       role: 'presentation',
