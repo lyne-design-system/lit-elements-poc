@@ -1,62 +1,49 @@
-// import { E2EElement, E2EPage, newE2EPage } from '@stencil/core/testing';
-// import events from './sbb-radio-button.events';
-// import { waitForCondition } from '../../global/helpers/testing/wait-for-condition';
+import { assert, elementUpdated, expect, fixture, oneEvent, waitUntil } from "@open-wc/testing";
+import { html } from 'lit/static-html.js';
+import events from './sbb-radio-button.events';
+import { SbbRadioButton } from "./sbb-radio-button";
 
-// describe('sbb-radio-button', () => {
-//   let element: E2EElement, page: E2EPage;
+describe('sbb-radio-button', () => {
+    let element: SbbRadioButton;
 
-//   beforeEach(async () => {
-//     page = await newE2EPage();
-//     await page.setContent('<sbb-radio-button value="Value">Value label</sbb-radio-button>');
+  beforeEach(async () => {
+    element = await fixture(html`<sbb-radio-button/>`);
+  });
 
-//     element = await page.find('sbb-radio-button');
-//   });
+  it('is defined', () => {
+    assert.instanceOf(element, SbbRadioButton);
+  });
 
-//   it('renders', async () => {
-//     expect(element).toHaveClass('hydrated');
-//   });
+  it('selects radio on click', async () => {
+    setTimeout(() => element.click());
 
-//   it('selects radio on click', async () => {
-//     const stateChange = await page.spyOnEvent(events.stateChange);
+    await oneEvent(element, events.stateChange);
 
-//     await element.click();
-//     await page.waitForChanges();
+    expect(element).to.have.attribute('checked');
+  });
 
-//     expect(element).toHaveAttribute('checked');
-//     await waitForCondition(() => stateChange.events.length === 1);
-//     expect(stateChange).toHaveReceivedEventTimes(1);
-//   });
+  it('does not deselect radio if already checked', async () => {
+    element.select();
+    await element.updateComplete;
 
-//   it('does not deselect radio if already checked', async () => {
-//     const stateChange = await page.spyOnEvent(events.stateChange);
+    element.addEventListener(events.stateChange, () => {throw new Error("state-change event should not be emitted")});
+    element.click();
+    await element.updateComplete;
+    expect(element).to.have.attribute('checked');
+  });
 
-//     await element.click();
-//     await page.waitForChanges();
-//     expect(element).toHaveAttribute('checked');
-//     await waitForCondition(() => stateChange.events.length === 1);
-//     expect(stateChange).toHaveReceivedEventTimes(1);
+  it('allows empty selection', async () => {
+    element.allowEmptySelection = true;
+    await element.updateComplete;
 
-//     await element.click();
-//     await page.waitForChanges();
-//     expect(element).toHaveAttribute('checked');
-//     await waitForCondition(() => stateChange.events.length === 1);
-//     expect(stateChange).toHaveReceivedEventTimes(1);
-//   });
+    element.click();
+    await element.updateComplete;
+    expect(element).to.have.attribute('checked');
 
-//   it('allows empty selection', async () => {
-//     const stateChange = await page.spyOnEvent(events.stateChange);
+    setTimeout(() => element.click());
 
-//     await element.setProperty('allowEmptySelection', true);
-//     await element.click();
-//     await page.waitForChanges();
-//     expect(element).toHaveAttribute('checked');
-//     await waitForCondition(() => stateChange.events.length === 1);
-//     expect(stateChange).toHaveReceivedEventTimes(1);
-
-//     await element.click();
-//     await page.waitForChanges();
-//     expect(element).not.toHaveAttribute('checked');
-//     await waitForCondition(() => stateChange.events.length === 2);
-//     expect(stateChange).toHaveReceivedEventTimes(2);
-//   });
-// });
+    await oneEvent(element, events.stateChange);
+    await elementUpdated;
+    expect(element).not.to.have.attribute('checked');
+  });
+});

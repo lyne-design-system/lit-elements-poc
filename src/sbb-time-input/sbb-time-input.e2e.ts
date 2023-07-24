@@ -1,4 +1,3 @@
-// import { E2EElement, E2EPage, newE2EPage } from '@stencil/core/testing';
 import { assert, expect, fixture, oneEvent, waitUntil } from "@open-wc/testing";
 import { html } from 'lit/static-html.js';
 import { SbbTimeInput } from "./sbb-time-input";

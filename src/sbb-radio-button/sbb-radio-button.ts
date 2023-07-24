@@ -117,7 +117,8 @@ export class SbbRadioButton extends LitElement {
  
     const oldValue = this._checked;
     this._checked = value;
-    this.requestUpdate('checked', oldValue, {reflect: true}) // if we use a setter, we need to manually call the 'requestUpdate()' method
+    // this.requestUpdate('checked', oldValue, {reflect: true})
+    this.requestUpdate('checked', oldValue) // if we use a setter, we need to manually call the 'requestUpdate()' method
     this.dispatchEvent(new CustomEvent<RadioButtonStateChange>('state-change', {bubbles: true, detail: { type: 'checked', checked: this._checked }}))
     !!this._selectionPanelElement && this._updateExpandedLabel();
   }
@@ -228,6 +229,7 @@ export class SbbRadioButton extends LitElement {
     this.setAttribute('aria-required', (this.required || this._requiredFromGroup).toString());
     this.setAttribute('aria-disabled', (this.disabled || this._disabledFromGroup).toString());
     setOptionalAttribute(this, 'data-is-selection-panel-input', this._isSelectionPanelInput);
+    setOptionalAttribute(this, 'checked', this.checked);
 
     return html`
       <label class="sbb-radio-button">
