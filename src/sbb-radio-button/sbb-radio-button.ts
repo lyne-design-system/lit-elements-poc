@@ -4,14 +4,8 @@ import {
   RadioButtonStateChange,
 } from './sbb-radio-button.custom';
 import { isValidAttribute, setOptionalAttribute } from '../global/helpers/is-valid-attribute';
-import {
-  createNamedSlotState,
-  documentLanguage,
-  formElementHandlerAspect,
-  HandlerRepository,
-  languageChangeHandlerAspect,
-  namedSlotChangeHandlerAspect,
-} from '../global/helpers';
+import { HandlerRepository, createNamedSlotState, documentLanguage, formElementHandlerAspect, languageChangeHandlerAspect, namedSlotChangeHandlerAspect } from '../global/helpers/eventing';
+
 import { i18nCollapsed, i18nExpanded } from '../global/i18n';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
@@ -58,7 +52,7 @@ export class SbbRadioButton extends LitElement {
   /**
    * Whether the radio button is checked.
    */
-  @property({ reflect: true, type: Boolean }) 
+  @property({ type: Boolean }) 
   public get checked() {
     return this._checked;
   }
@@ -66,8 +60,8 @@ export class SbbRadioButton extends LitElement {
   /**
    * Label size variant, either m or s.
    */
-  @property({ reflect: true }) public size: InterfaceSbbRadioButtonAttributes['size'] =
-    'm';
+  @property({ reflect: true }) 
+  public size: InterfaceSbbRadioButtonAttributes['size'] = 'm';
 
   /**
    * Whether the component must be set disabled due disabled attribute on sbb-radio-button-group.
@@ -116,15 +110,15 @@ export class SbbRadioButton extends LitElement {
   //   eventName: 'state-change',
   // })
   // public stateChange: EventEmitter<RadioButtonStateChange>;
-
   
   public set checked(value) {
     if(this._checked === value) 
       return;
-
+ 
+    const oldValue = this._checked;
     this._checked = value;
-    this.requestUpdate() // if we use a setter, we need to manually call the 'requestUpdate()' method
-    this.dispatchEvent(new CustomEvent('state-change', {bubbles: true, detail: { type: 'checked', checked: this._checked }}))
+    this.requestUpdate('checked', oldValue, {reflect: true}) // if we use a setter, we need to manually call the 'requestUpdate()' method
+    this.dispatchEvent(new CustomEvent<RadioButtonStateChange>('state-change', {bubbles: true, detail: { type: 'checked', checked: this._checked }}))
     !!this._selectionPanelElement && this._updateExpandedLabel();
   }
 
@@ -139,11 +133,11 @@ export class SbbRadioButton extends LitElement {
 
   constructor() {
     super();
-    this.addEventListener('click', (e) => this.handleClick(e));
+    this.addEventListener('click', (e) => this._handleClick(e));
     this.addEventListener('keydown', (e) => this.handleKeyDown(e));
   }
 
-  public handleClick(event: Event) {
+  private _handleClick(event: Event) {
     event.preventDefault();
     this.select();
   }
@@ -189,9 +183,9 @@ export class SbbRadioButton extends LitElement {
     this._radioButtonAttributeObserver.disconnect();
   }
 
-  public async handleKeyDown(evt: KeyboardEvent): Promise<void> {
+  public handleKeyDown(evt: KeyboardEvent) {
     if (evt.code === 'Space') {
-      await this.select();
+      this.select();
     }
   }
 
@@ -241,10 +235,10 @@ export class SbbRadioButton extends LitElement {
           type="radio"
           aria-hidden="true"
           tabindex="-1"
-          disabled=${this.disabled || this._disabledFromGroup || nothing}
-          required=${this.required || this._requiredFromGroup || nothing}
-          checked=${this.checked || nothing}
-          value=${this.value || nothing}
+          ?disabled=${this.disabled || this._disabledFromGroup}
+          ?required=${this.required || this._requiredFromGroup}
+          ?checked=${this.checked}
+          value=${this.value}
           class="sbb-radio-button__input"
         />
         <span class="sbb-radio-button__label-slot">

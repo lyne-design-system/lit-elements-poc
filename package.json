@@ -11,6 +11,7 @@
     "docs:md": "node docs_generate.js",
     "test": "wtr --group default",
     "test:spec": "wtr --group spec",
+    "test:spec:watch": "wtr --group spec --watch",
     "test:spec-snapshot": "wtr --group spec --update-snapshot",
     "test:e2e": "wtr --group e2e",
     "start": "npm run storybook",

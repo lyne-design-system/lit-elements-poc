@@ -16,6 +16,6 @@ export default {
     defaultReporter(),
     summaryReporter()
   ],
-  browsers: [puppeteerLauncher({ concurrency: 1 })],
+  browsers: [puppeteerLauncher({ concurrency: 1, launchOptions: { headless: true } })],
   plugins: [esbuildPlugin({ ts: true })],
 };

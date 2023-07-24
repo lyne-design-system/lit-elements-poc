@@ -1,24 +1,38 @@
-// import { SbbRadioButton } from './sbb-radio-button';
-// import { newSpecPage } from '@stencil/core/testing';
+import { expect, fixture } from '@open-wc/testing';
+import { SbbRadioButton } from './sbb-radio-button';
+import { html } from 'lit/static-html.js';
 
-// describe('sbb-radio-button', () => {
-//   it('renders', async () => {
-//     const { root } = await newSpecPage({
-//       components: [SbbRadioButton],
-//       html: '<sbb-radio-button />',
-//     });
+describe('sbb-radio-button', () => {
+  let element: SbbRadioButton;
 
-//     expect(root).toEqualHtml(`
-//         <sbb-radio-button aria-checked="false" aria-disabled="false" aria-required="false" size="m" role="radio">
-//           <mock:shadow-root>
-//             <label class="sbb-radio-button">
-//               <input aria-hidden="true" class="sbb-radio-button__input" tabindex="-1" type="radio">
-//               <span class="sbb-radio-button__label-slot">
-//                 <slot></slot>
-//               </span>
-//             </label>
-//           </mock:shadow-root>
-//         </sbb-radio-button>
-//       `);
-//   });
-// });
+  beforeEach(async () => {
+    element = await fixture(html`<sbb-radio-button></sbb-radio-button>`);
+  });
+
+  it('is defined', () => {
+    expect(element).instanceOf(SbbRadioButton);
+  });
+
+  it('renders', async () => {
+
+    // TODO Analyze the decorator problem
+    // debugger;
+    // element.size = 's';
+    // element.checked = true;
+    // element.test();
+    
+    await element.updateComplete;
+    
+    expect(element).dom.to.be.equal(
+      `<sbb-radio-button aria-checked="false" aria-disabled="false" aria-required="false" size="m" role="radio">`
+    )
+    expect(element).shadowDom.to.be.equal(
+      `<label class="sbb-radio-button">
+        <input aria-hidden="true" class="sbb-radio-button__input" tabindex="-1" type="radio">
+        <span class="sbb-radio-button__label-slot">
+        <slot></slot>
+        </span>
+      </label>`
+    )
+  });
+});

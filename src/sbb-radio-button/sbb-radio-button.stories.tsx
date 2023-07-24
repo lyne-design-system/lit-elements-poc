@@ -42,7 +42,7 @@ const defaultArgTypes: ArgTypes = {
   value,
   checked,
   disabled,
-  size,
+  // size,
   'aria-label': ariaLabel,
 };
 
@@ -50,11 +50,11 @@ const defaultArgs: Args = {
   value: 'First value',
   checked: false,
   disabled: false,
-  size: size.options[0],
+  // size: size.options[0],
   'aria-label': undefined,
 };
 
-const DefaultTemplate = (args): JSX.Element => <sbb-radio-button {...args}>Value</sbb-radio-button>;
+const DefaultTemplate = (args): JSX.Element => <sbb-radio-button>Value</sbb-radio-button>;
 
 const MultilineLabelTemplate = (args): JSX.Element => (
   <sbb-radio-button {...args}>

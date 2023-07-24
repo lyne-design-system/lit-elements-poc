@@ -4,7 +4,7 @@ import { html } from 'lit/static-html.js';
 import { MyElement } from "./sbb-element";
 
 
-describe('sbb-toast', () => {
+describe('sbb-element', () => {
   let element: MyElement;
 
   beforeEach(async () => {
