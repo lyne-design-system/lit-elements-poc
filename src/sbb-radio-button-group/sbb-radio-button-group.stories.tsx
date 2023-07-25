@@ -2,8 +2,13 @@
 import { h, JSX } from 'jsx-dom';
 import readme from './readme.md';
 import { withActions } from '@storybook/addon-actions/decorator';
-import type { Meta, StoryObj, ArgTypes, Args, Decorator } from '@storybook/html';
+import type { Meta, StoryObj, ArgTypes, Args, Decorator } from '@storybook/web-components';
 import type { InputType } from '@storybook/types';
+import { SbbRadioButtonGroup } from './sbb-radio-button-group';
+import { SbbRadioButton } from '../sbb-radio-button/sbb-radio-button';
+
+const a = new SbbRadioButtonGroup();
+const b = new SbbRadioButton();
 
 const value: InputType = {
   control: {

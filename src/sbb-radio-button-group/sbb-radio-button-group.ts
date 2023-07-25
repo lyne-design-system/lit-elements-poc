@@ -1,85 +1,69 @@
-import {
-  Component,
-  ComponentInterface,
-  Element,
-  Event,
-  EventEmitter,
-  h,
-  Host,
-  JSX,
-  Listen,
-  Prop,
-  State,
-  Watch,
-} from '@stencil/core';
-import { getNextElementIndex, isArrowKeyPressed } from '../../global/helpers/arrow-navigation';
-import { InterfaceSbbRadioButtonGroupAttributes } from './sbb-radio-button-group.custom';
-import { toggleDatasetEntry } from '../../global/helpers/dataset';
+import { customElement, property, state } from 'lit/decorators.js';
+import { LitElement, PropertyValues, html, nothing } from 'lit';
+import { getNextElementIndex, isArrowKeyPressed } from '../global/helpers/arrow-navigation';
+import { toggleDatasetEntry } from '../global/helpers/dataset';
+import { HandlerRepository, createNamedSlotState, namedSlotChangeHandlerAspect } from '../global/helpers/eventing';
 import { RadioButtonStateChange } from '../sbb-radio-button/sbb-radio-button.custom';
-import {
-  createNamedSlotState,
-  HandlerRepository,
-  namedSlotChangeHandlerAspect,
-} from '../../global/helpers';
+import { InterfaceSbbRadioButtonGroupAttributes } from './sbb-radio-button-group.custom';
+import { SbbRadioButton } from '../sbb-radio-button/sbb-radio-button';
+import Style from './sbb-radio-button-group.scss';
 
 /**
  * @slot unnamed - Use this to provide radio buttons within the group.
  * @slot error - Use this to provide a `sbb-form-error` to show an error message.
  */
 
-@Component({
-  shadow: true,
-  styleUrl: 'sbb-radio-button-group.scss',
-  tag: 'sbb-radio-button-group',
-})
-export class SbbRadioButtonGroup implements ComponentInterface {
+@customElement('sbb-radio-button-group')
+export class SbbRadioButtonGroup extends LitElement {
+  static override styles = Style;
+
   /**
    * Whether the radios can be deselected.
    */
-  @Prop() public allowEmptySelection = false;
+  @property({type: Boolean}) public allowEmptySelection = false;
 
   /**
    * Whether the radio group is disabled.
    */
-  @Prop() public disabled = false;
+  @property({type: Boolean}) public disabled = false;
 
   /**
    * Whether the radio group is required.
    */
-  @Prop() public required = false;
+  @property({type: Boolean}) public required = false;
 
   /**
    * The value of the radio group.
    */
-  @Prop({ mutable: true }) public value?: any | null;
+  @property() public value?: any | null;
 
   /**
    * Size variant, either m or s.
    */
-  @Prop() public size: InterfaceSbbRadioButtonGroupAttributes['size'] = 'm';
+  @property() public size: InterfaceSbbRadioButtonGroupAttributes['size'] = 'm';
 
   /**
    * Overrides the behaviour of `orientation` property.
    */
-  @Prop({ reflect: true })
+  @property({ reflect: true })
   public horizontalFrom?: InterfaceSbbRadioButtonGroupAttributes['horizontalFrom'];
 
   /**
    * Radio group's orientation, either horizontal or vertical.
    */
-  @Prop({ reflect: true })
+  @property({ reflect: true })
   public orientation: InterfaceSbbRadioButtonGroupAttributes['orientation'] = 'horizontal';
 
   /**
    * State of listed named slots, by indicating whether any element for a named slot is defined.
    */
-  @State() private _namedSlots = createNamedSlotState('error');
+  @state() private _namedSlots = createNamedSlotState('error');
 
-  @Element() private _element!: HTMLElement;
+  private get _element(): HTMLElement {return this}
 
   private _hasSelectionPanel: boolean;
 
-  @Watch('value')
+  // @Watch('value')
   public valueChanged(value: any | undefined): void {
     for (const radio of this._radioButtons) {
       radio.checked = radio.value === value;
@@ -88,7 +72,7 @@ export class SbbRadioButtonGroup implements ComponentInterface {
     this._setFocusableRadio();
   }
 
-  @Watch('disabled')
+  // @Watch('disabled')
   public updateDisabled(): void {
     for (const radio of this._radioButtons) {
       toggleDatasetEntry(radio, 'groupDisabled', this.disabled);
@@ -97,21 +81,21 @@ export class SbbRadioButtonGroup implements ComponentInterface {
     this._setFocusableRadio();
   }
 
-  @Watch('required')
+  // @Watch('required')
   public updateRequired(): void {
     for (const radio of this._radioButtons) {
       toggleDatasetEntry(radio, 'groupRequired', this.required);
     }
   }
 
-  @Watch('size')
+  // @Watch('size')
   public updateSize(): void {
     for (const radio of this._radioButtons) {
       radio.size = this.size;
     }
   }
 
-  @Watch('allowEmptySelection')
+  // @Watch('allowEmptySelection')
   public updateAllowEmptySelection(): void {
     for (const radio of this._radioButtons) {
       radio.allowEmptySelection = this.allowEmptySelection;
@@ -122,46 +106,69 @@ export class SbbRadioButtonGroup implements ComponentInterface {
    * Emits whenever the radio group value changes.
    * @deprecated only used for React. Will probably be removed once React 19 is available.
    */
-  @Event({
-    bubbles: true,
-    composed: true,
-  })
-  public didChange: EventEmitter;
+  // @Event({
+  //   bubbles: true,
+  //   composed: true,
+  // })
+  // public didChange: EventEmitter;
 
   /**
    * Emits whenever the radio group value changes.
    */
-  @Event({
-    bubbles: true,
-    composed: true,
-  })
-  public change: EventEmitter;
+  // @Event({
+  //   bubbles: true,
+  //   composed: true,
+  // })
+  // public change: EventEmitter;
 
   /**
    * Emits whenever the radio group value changes.
    */
-  @Event({
-    bubbles: true,
-    composed: true,
-  })
-  public input: EventEmitter;
+  // @Event({
+  //   bubbles: true,
+  //   composed: true,
+  // })
+  // public input: EventEmitter;
 
   private _handlerRepository = new HandlerRepository(
     this._element,
     namedSlotChangeHandlerAspect((m) => (this._namedSlots = m(this._namedSlots)))
   );
 
-  public connectedCallback(): void {
+  public override connectedCallback(): void {
+    super.connectedCallback();
     this._hasSelectionPanel = !!this._element.querySelector('sbb-selection-panel');
     toggleDatasetEntry(this._element, 'hasSelectionPanel', this._hasSelectionPanel);
+
+    this.addEventListener('state-change', (ev: CustomEvent<RadioButtonStateChange>) => this.onRadioButtonSelect(ev), {passive: true});
+    this.addEventListener('keydown', (ev: KeyboardEvent) => this.handleKeyDown(ev));
+
     this._handlerRepository.connect();
   }
 
-  public disconnectedCallback(): void {
+  public override disconnectedCallback(): void {
+    super.disconnectedCallback();
     this._handlerRepository.disconnect();
   }
 
-  @Listen('state-change', { passive: true })
+  protected override willUpdate(changedProperties: PropertyValues<this>) {
+    if (changedProperties.has('value')) {
+      this.valueChanged(this.value);
+    }
+    if (changedProperties.has('disabled')) {
+      this.updateDisabled();
+    }
+    if (changedProperties.has('required')) {
+      this.updateRequired();
+    }
+    if (changedProperties.has('size')) {
+      this.updateSize();
+    }
+    if (changedProperties.has('allowEmptySelection')) {
+      this.updateAllowEmptySelection();
+    }
+  }
+
   public onRadioButtonSelect(event: CustomEvent<RadioButtonStateChange>): void {
     event.stopPropagation();
     if (event.detail.type !== 'checked') {
@@ -180,9 +187,9 @@ export class SbbRadioButtonGroup implements ComponentInterface {
   }
 
   private _emitChange(value?: string): void {
-    this.change.emit({ value });
-    this.input.emit({ value });
-    this.didChange.emit({ value });
+    this.dispatchEvent(new CustomEvent('change', {bubbles: true, composed: true, detail: { value }}))
+    this.dispatchEvent(new CustomEvent('input', {bubbles: true, composed: true, detail: { value }}))
+    this.dispatchEvent(new CustomEvent('didChange', {bubbles: true, composed: true, detail: { value }}))
   }
 
   private _updateRadios(): void {
@@ -202,13 +209,13 @@ export class SbbRadioButtonGroup implements ComponentInterface {
     this._setFocusableRadio();
   }
 
-  private get _radioButtons(): HTMLSbbRadioButtonElement[] {
+  private get _radioButtons(): SbbRadioButton[] {
     return (
-      Array.from(this._element.querySelectorAll('sbb-radio-button')) as HTMLSbbRadioButtonElement[]
+      Array.from(this._element.querySelectorAll('sbb-radio-button')) as SbbRadioButton[]
     ).filter((el) => el.closest('sbb-radio-button-group') === this._element);
   }
 
-  private get _enabledRadios(): HTMLSbbRadioButtonElement[] | undefined {
+  private get _enabledRadios(): SbbRadioButton[] | undefined {
     if (!this.disabled) {
       return this._radioButtons.filter((r) => !r.disabled);
     }
@@ -222,13 +229,12 @@ export class SbbRadioButtonGroup implements ComponentInterface {
     }
   }
 
-  private _getRadioTabIndex(radio: HTMLSbbRadioButtonElement): number {
+  private _getRadioTabIndex(radio: SbbRadioButton): number {
     return (radio.checked || this._hasSelectionPanel) && !radio.disabled && !this.disabled ? 0 : -1;
   }
 
-  @Listen('keydown')
   public handleKeyDown(evt: KeyboardEvent): void {
-    const enabledRadios: HTMLSbbRadioButtonElement[] = this._enabledRadios;
+    const enabledRadios: SbbRadioButton[] = this._enabledRadios;
 
     if (
       !enabledRadios ||
@@ -248,11 +254,11 @@ export class SbbRadioButtonGroup implements ComponentInterface {
     let nextIndex: number;
 
     if (this._hasSelectionPanel) {
-      current = enabledRadios.findIndex((e: HTMLSbbRadioButtonElement) => e === evt.target);
+      current = enabledRadios.findIndex((e: SbbRadioButton) => e === evt.target);
       nextIndex = getNextElementIndex(evt, current, enabledRadios.length);
     } else {
       const checked: number = enabledRadios.findIndex(
-        (radio: HTMLSbbRadioButtonElement) => radio.checked
+        (radio: SbbRadioButton) => radio.checked
       );
       nextIndex = getNextElementIndex(evt, checked, enabledRadios.length);
       enabledRadios[nextIndex].select();
@@ -262,18 +268,26 @@ export class SbbRadioButtonGroup implements ComponentInterface {
     evt.preventDefault();
   }
 
-  public render(): JSX.Element {
-    return (
-      <Host role="radiogroup">
-        <div class="sbb-radio-group">
-          <slot onSlotchange={() => this._updateRadios()} />
-        </div>
-        {this._namedSlots.error && (
+  override render() {
+    this.setAttribute('role', 'radiogroup');
+
+    return html`
+      <div class="sbb-radio-group">
+        <slot @slotchange="${() => this._updateRadios()}" />
+      </div>
+      ${this._namedSlots.error ? 
+        html`
           <div class="sbb-radio-group__error">
             <slot name="error" />
           </div>
-        )}
-      </Host>
-    );
+        ` : nothing
+      }
+    `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'sbb-radio-button-group': SbbRadioButtonGroup;
   }
 }

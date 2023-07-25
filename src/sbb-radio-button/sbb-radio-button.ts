@@ -132,12 +132,6 @@ export class SbbRadioButton extends LitElement {
     this.dispatchEvent(new CustomEvent('state-change', {bubbles: true, detail: { type: 'disabled', disabled: this._disabled }}))
   }
 
-  constructor() {
-    super();
-    this.addEventListener('click', (e) => this._handleClick(e));
-    this.addEventListener('keydown', (e) => this.handleKeyDown(e));
-  }
-
   private _handleClick(event: Event) {
     event.preventDefault();
     this.select();
@@ -176,6 +170,9 @@ export class SbbRadioButton extends LitElement {
   override firstUpdated(): void {
     super.firstUpdated(null);
     !!this._selectionPanelElement && this._updateExpandedLabel();
+
+    this.addEventListener('click', (e) => this._handleClick(e));
+    this.addEventListener('keydown', (e) => this.handleKeyDown(e));
   }
 
   override disconnectedCallback(): void {
