@@ -16,6 +16,6 @@ export default {
     defaultReporter(),
     summaryReporter()
   ],
-  browsers: [puppeteerLauncher({ concurrency: 1, launchOptions: { headless: 'new' } })],
+  browsers: [puppeteerLauncher({ concurrency: 1, launchOptions: { headless: 'new' } })], // Set headless to false to allow the debugger
   plugins: [esbuildPlugin({ ts: true })],
 };
