@@ -1,21 +1,28 @@
+import { expect, fixture } from '@open-wc/testing';
+import { html } from 'lit/static-html.js';
 import { SbbRadioButtonGroup } from './sbb-radio-button-group';
-import { newSpecPage } from '@stencil/core/testing';
 
 describe('sbb-radio-button-group', () => {
-  it('renders', async () => {
-    const { root } = await newSpecPage({
-      components: [SbbRadioButtonGroup],
-      html: '<sbb-radio-button-group />',
-    });
+  let element: SbbRadioButtonGroup;
 
-    expect(root).toEqualHtml(`
-        <sbb-radio-button-group orientation="horizontal" role="radiogroup">
-          <mock:shadow-root>
-          <div class="sbb-radio-group">
-            <slot></slot>
-          </div>
-          </mock:shadow-root>
-        </sbb-radio-button-group>
-      `);
+  beforeEach(async () => {
+    element = await fixture(html`<sbb-radio-button-group/>`);
+  });
+
+  it('is defined', () => {
+    expect(element).instanceOf(SbbRadioButtonGroup);
+  });
+
+  it('renders', async () => {
+
+    // TODO Same problem as RadioButton spec. Analyze the decorator problem
+
+    expect(element).dom.to.be.equal(`<sbb-radio-button-group orientation="horizontal" role="radiogroup"></sbb-radio-button-group>`);
+
+    expect(element).shadowDom.to.be.equal(`
+      <div class="sbb-radio-group">
+        <slot></slot>
+      </div>`
+    )
   });
 });
