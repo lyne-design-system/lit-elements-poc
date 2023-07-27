@@ -11,10 +11,10 @@
     "docs:md": "node docs_generate.js",
     "test": "wtr --group default",
     "test:spec": "wtr --group spec",
-    "test:spec:watch": "wtr --group spec --watch",
-    "test:spec-snapshot": "wtr --group spec --update-snapshot",
+    "test:spec:watch": "npm run test:spec -- --watch",
+    "test:spec-snapshot": "npm run test:spec -- --update-snapshot",
     "test:e2e": "wtr --group e2e",
-    "test:e2e:watch": "wtr --group e2e --watch",
+    "test:e2e:watch": "npm run test:e2e -- --watch",
     "start": "npm run storybook",
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build"
