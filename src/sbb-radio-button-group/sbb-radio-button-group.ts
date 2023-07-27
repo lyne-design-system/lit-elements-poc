@@ -224,7 +224,7 @@ export class SbbRadioButtonGroup extends LitElement {
   private _setFocusableRadio(): void {
     const checked = this._radioButtons.find((radio) => radio.checked && !radio.disabled);
 
-    if (!checked && this._enabledRadios) {
+    if (!checked && this._enabledRadios?.length > 0) {
       this._enabledRadios[0].tabIndex = 0;
     }
   }

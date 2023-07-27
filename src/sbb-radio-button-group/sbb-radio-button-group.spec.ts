@@ -14,9 +14,6 @@ describe('sbb-radio-button-group', () => {
   });
 
   it('renders', async () => {
-
-    // TODO Same problem as RadioButton spec. Analyze the decorator problem
-
     expect(element).dom.to.be.equal(`<sbb-radio-button-group orientation="horizontal" role="radiogroup"></sbb-radio-button-group>`);
 
     expect(element).shadowDom.to.be.equal(`

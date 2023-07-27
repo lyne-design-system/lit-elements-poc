@@ -14,15 +14,6 @@ describe('sbb-radio-button', () => {
   });
 
   it('renders', async () => {
-
-    // TODO Analyze the decorator problem
-    // debugger;
-    // element.size = 's';
-    // element.checked = true;
-    // element.test();
-    
-    await element.updateComplete;
-    
     expect(element).dom.to.be.equal(
       `<sbb-radio-button aria-checked="false" aria-disabled="false" aria-required="false" size="m" role="radio">`
     )
