@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "docs": "npm-run-all --sequential docs:manifest docs:md",
-    "docs:manifest": "cem analyze",
+    "docs:manifest": "custom-elements-manifest analyze",
     "docs:md": "node docs_generate.js",
     "test": "wtr --group default",
     "test:spec": "wtr --group spec",

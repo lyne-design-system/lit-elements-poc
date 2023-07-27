@@ -43,7 +43,7 @@ export class MyElement extends LitElement {
     this._prop = value;
   }
 
-  // Init a Controller
+  // Init a Controller (This is advanced, we'll see it another time)
   private _testController = new TestController(this);
 
   /**
@@ -64,6 +64,13 @@ export class MyElement extends LitElement {
     super.disconnectedCallback();
   }
 
+  private _onClick() {
+    this.count++;
+
+    // There are no native EventEmitter
+    this.dispatchEvent(new CustomEvent('count-changed'));
+  }
+
   override render() {
     this.setAttribute('data-state', 'initial');
     return html`
@@ -74,11 +81,6 @@ export class MyElement extends LitElement {
       <div class="prop-display">Prop: ${this._prop}</div>
       <slot></slot>
     `;
-  }
-
-  private _onClick() {
-    this.count++;
-    this.dispatchEvent(new CustomEvent('count-changed'));
   }
 
   /**
