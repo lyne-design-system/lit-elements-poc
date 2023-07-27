@@ -9,6 +9,7 @@ import { HandlerRepository, createNamedSlotState, documentLanguage, formElementH
 import { i18nCollapsed, i18nExpanded } from '../global/i18n';
 import { LitElement, html, nothing } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
 import Style from './sbb-radio-button.scss';
 
 /** Configuration for the attribute to look at if component is nested in a sbb-radio-button-group */
@@ -231,15 +232,16 @@ export class SbbRadioButton extends LitElement {
     return html`
       <label class="sbb-radio-button">
         <input
+        class="sbb-radio-button__input"
           type="radio"
           aria-hidden="true"
           tabindex="-1"
           ?disabled=${this.disabled || this._disabledFromGroup}
           ?required=${this.required || this._requiredFromGroup}
           ?checked=${this.checked}
-          value=${this.value}
-          class="sbb-radio-button__input"
-        />
+          value=${ifDefined(this.value)}
+        /> <!-- OR value=${this.value ?? nothing} both checks only for undefined & null -->
+        <!-- OR value=${this.value || nothing} checks for truthy -->
         <span class="sbb-radio-button__label-slot">
           <slot />
           ${!!this._selectionPanelElement && this._namedSlots['suffix'] ? html`<slot name="suffix" />` : nothing}
