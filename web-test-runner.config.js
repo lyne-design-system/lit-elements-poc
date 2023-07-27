@@ -16,6 +16,8 @@ export default {
     defaultReporter(),
     summaryReporter()
   ],
-  browsers: [puppeteerLauncher({ concurrency: 1, launchOptions: { headless: 'new' } })], // Set headless to false to use the debugger
-  plugins: [esbuildPlugin({ ts: true })],
+  browsers: [puppeteerLauncher({ concurrency: 1, launchOptions: { headless: 'new', devtools: true } })], // Set headless to false to use the debugger
+  plugins: [
+    esbuildPlugin({ ts: true, target: 'es2020' })
+  ],
 };
