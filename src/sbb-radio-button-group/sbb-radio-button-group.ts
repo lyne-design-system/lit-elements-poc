@@ -152,6 +152,7 @@ export class SbbRadioButtonGroup extends LitElement {
   }
 
   protected override willUpdate(changedProperties: PropertyValues<this>) {
+    super.willUpdate(changedProperties);
     if (changedProperties.has('value')) {
       this.valueChanged(this.value);
     }

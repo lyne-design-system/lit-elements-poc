@@ -177,8 +177,8 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
       <input
         type="text"
         ${spread(inputAttributes)}
-        @input="${(event: InputEvent) => this._preventCharInsert(event)}"
-        @change="${(event: Event) => this._updateValueAndEmitChange(event)}"
+        @input=${(event: InputEvent) => this._preventCharInsert(event)}
+        @change=${(event: Event) => this._updateValueAndEmitChange(event)}
       />
     `;
   }

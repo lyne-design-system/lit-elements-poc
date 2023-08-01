@@ -13,10 +13,15 @@ export function isValidAttribute(element: HTMLElement, attribute: string): boole
  * @param attribute The attribute name
  * @param value The attribute value
  */
-export function setOptionalAttribute(element: HTMLElement, attribute: string, value: any) {
-  if (value) {
-    element.setAttribute(attribute, value);
-  } else {
+export function setAttribute(element: HTMLElement, attribute: string, value: any) {
+  if (!value) {
     element.removeAttribute(attribute);
+    return;
+  }
+
+  if (typeof value === 'boolean') {
+    element.setAttribute(attribute, '');
+  } else {
+    element.setAttribute(attribute, value);
   }
 }

@@ -1,5 +1,6 @@
 import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
+import { ref } from 'lit/directives/ref.js';
 import { TestController } from './controller';
 import Style from './sbb-element.scss';
 
@@ -45,6 +46,7 @@ export class MyElement extends LitElement {
 
   // Init a Controller (This is advanced, we'll see it another time)
   private _testController = new TestController(this);
+  public _btnRef: Element;
 
   /**
    * Public function doc
@@ -75,7 +77,7 @@ export class MyElement extends LitElement {
     this.setAttribute('data-state', 'initial');
     return html`
       <h1>${this._sayHello(this.name)}!</h1>
-      <button @click=${this._onClick} part="button">
+      <button @click=${this._onClick} part="button" ${ref((ref) => this._btnRef = ref)}>
         Click Count: ${this.count}
       </button>
       <div class="prop-display">Prop: ${this._prop}</div>

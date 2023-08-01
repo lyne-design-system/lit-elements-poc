@@ -3,7 +3,7 @@ import {
   InterfaceSbbRadioButtonAttributes,
   RadioButtonStateChange,
 } from './sbb-radio-button.custom';
-import { isValidAttribute, setOptionalAttribute } from '../global/helpers/is-valid-attribute';
+import { isValidAttribute, setAttribute } from '../global/helpers/is-valid-attribute';
 import { HandlerRepository, createNamedSlotState, documentLanguage, formElementHandlerAspect, languageChangeHandlerAspect, namedSlotChangeHandlerAspect } from '../global/helpers/eventing';
 
 import { i18nCollapsed, i18nExpanded } from '../global/i18n';
@@ -226,8 +226,8 @@ export class SbbRadioButton extends LitElement {
     this.setAttribute('aria-checked', (!!this._checked).toString())
     this.setAttribute('aria-required', (this.required || this._requiredFromGroup).toString());
     this.setAttribute('aria-disabled', (this.disabled || this._disabledFromGroup).toString());
-    setOptionalAttribute(this, 'data-is-selection-panel-input', this._isSelectionPanelInput);
-    setOptionalAttribute(this, 'checked', this.checked);
+    setAttribute(this, 'data-is-selection-panel-input', this._isSelectionPanelInput);
+    setAttribute(this, 'checked', this.checked);
 
     return html`
       <label class="sbb-radio-button">
