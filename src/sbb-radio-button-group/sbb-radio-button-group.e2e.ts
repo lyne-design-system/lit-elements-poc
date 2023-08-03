@@ -3,6 +3,7 @@ import { html } from 'lit/static-html.js';
 import { sendKeys } from "@web/test-runner-commands";
 import { SbbRadioButtonGroup } from "./sbb-radio-button-group";
 import { SbbRadioButton } from "../sbb-radio-button/sbb-radio-button";
+import { EventSpy } from "../global/helpers/testing/event-spy";
 
 describe('sbb-radio-button-group', () => {
   let element: SbbRadioButtonGroup;
@@ -25,7 +26,7 @@ describe('sbb-radio-button-group', () => {
     assert.instanceOf(radios[0], SbbRadioButton);
   });
 
-  describe.only('events', () => {
+  describe('events', () => {
     it('selects radio on click', async () => {
       const firstRadio = radios[0];
       const radio = radios[1];
@@ -40,13 +41,18 @@ describe('sbb-radio-button-group', () => {
     });
 
     it('dispatches event on radio change', async () => {
+      const changeSpy = new EventSpy('change');
+      const inputSpy = new EventSpy('input');
       const firstRadio = radios[0];
       const checkedRadio = radios[1];
 
       setTimeout(() => checkedRadio.click());
 
-      await oneEvent(element, 'change');
-      await oneEvent(element, 'input');
+      await waitUntil(() => changeSpy.count === 1);
+      await waitUntil(() => inputSpy.count === 1);
+
+      expect(changeSpy.count).to.be.greaterThan(0);
+      expect(inputSpy.count).to.be.greaterThan(0);
 
       firstRadio.click();
       await element.updateComplete;
@@ -66,7 +72,7 @@ describe('sbb-radio-button-group', () => {
 
     it('preserves radio button disabled state after being disabled from group', async () => {
       const firstRadio = radios[0];
-      const secondRadio = radios[0];
+      const secondRadio = radios[1];
       const disabledRadio = radios[2];
 
       element.disabled = true;
@@ -98,7 +104,8 @@ describe('sbb-radio-button-group', () => {
 
       firstRadio.click();
       await element.updateComplete;
-
+      
+      firstRadio.focus();
       await sendKeys({ press: 'ArrowLeft' });
       await element.updateComplete;
 
@@ -117,6 +124,7 @@ describe('sbb-radio-button-group', () => {
       firstRadio.click();
       await element.updateComplete;
 
+      firstRadio.focus()
       await sendKeys({ press: 'ArrowRight'});
 
       await element.updateComplete
@@ -137,6 +145,7 @@ describe('sbb-radio-button-group', () => {
       await element.updateComplete;
       expect(checkedRadio).to.have.attribute('checked');
 
+      checkedRadio.focus();
       await sendKeys({ press: 'ArrowRight'});
       await sendKeys({ press: 'ArrowRight'});
 
