@@ -23,7 +23,8 @@ describe('sbb-time-input', () => {
 
     await sendKeys({ type: '1' });
 
-    setTimeout(async () => await sendKeys({ press: 'Tab' }))
+    sendKeys({ press: 'Tab' })
+    // setTimeout(async () => await sendKeys({ press: 'Tab' }))
 
     await oneEvent(element, 'change');
   });

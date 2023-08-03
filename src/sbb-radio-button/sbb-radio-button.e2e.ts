@@ -1,4 +1,4 @@
-import { assert, elementUpdated, expect, fixture, oneEvent, waitUntil } from "@open-wc/testing";
+import { assert, expect, fixture, oneEvent, waitUntil } from "@open-wc/testing";
 import { html } from 'lit/static-html.js';
 import events from './sbb-radio-button.events';
 import { SbbRadioButton } from "./sbb-radio-button";
@@ -43,7 +43,7 @@ describe('sbb-radio-button', () => {
     setTimeout(() => element.click());
 
     await oneEvent(element, events.stateChange);
-    await elementUpdated;
+    await element.updateComplete;
     expect(element).not.to.have.attribute('checked');
   });
 });

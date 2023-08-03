@@ -33,7 +33,7 @@ describe('sbb-radio-button-group', () => {
       expect(firstRadio).to.have.attribute('checked');
 
       radio.click();
-      await element.updateComplete; // TODO decorator problem
+      await element.updateComplete;
 
       expect(radio).to.have.attribute('checked');
       expect(firstRadio).not.to.have.attribute('checked');
