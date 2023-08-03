@@ -2,6 +2,7 @@ import { assert, expect, fixture, oneEvent, waitUntil } from "@open-wc/testing";
 import { html } from 'lit/static-html.js';
 import { SbbTimeInput } from "./sbb-time-input";
 import { sendKeys } from "@web/test-runner-commands";
+import { EventSpy } from "../global/helpers/testing/event-spy";
 
 describe('sbb-time-input', () => {
   let element: SbbTimeInput;
@@ -27,6 +28,18 @@ describe('sbb-time-input', () => {
     // setTimeout(async () => await sendKeys({ press: 'Tab' }))
 
     await oneEvent(element, 'change');
+  });
+
+  it('should emit event - alternative', async () => {
+    const changeSpy = new EventSpy('change');
+    input.focus();
+
+    await sendKeys({ type: '1' });
+    await sendKeys({ press: 'Tab' })
+
+    await waitUntil(() => changeSpy.count === 1);
+
+    expect(changeSpy.count).to.be.greaterThan(0);
   });
 
   it('should watch for value changes', async () => {
