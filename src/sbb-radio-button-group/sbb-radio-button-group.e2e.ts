@@ -46,7 +46,7 @@ describe('sbb-radio-button-group', () => {
       const firstRadio = radios[0];
       const checkedRadio = radios[1];
 
-      setTimeout(() => checkedRadio.click());
+      checkedRadio.click();
 
       await waitUntil(() => changeSpy.count === 1);
       await waitUntil(() => inputSpy.count === 1);
