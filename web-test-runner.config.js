@@ -1,6 +1,7 @@
 import { esbuildPlugin } from '@web/dev-server-esbuild';
 import { defaultReporter, summaryReporter } from '@web/test-runner';
 import { puppeteerLauncher } from '@web/test-runner-puppeteer';
+import { fileURLToPath } from 'url';
 
 const mode = process.env.MODE || 'dev';
 
@@ -18,6 +19,10 @@ export default {
   ],
   browsers: [puppeteerLauncher({ concurrency: 1, launchOptions: { headless: 'new', devtools: true } })], // Set headless to false to use the debugger
   plugins: [
-    esbuildPlugin({ ts: true, target: 'es2020' })
+    
+    esbuildPlugin({ 
+      ts: true, 
+      tsconfig: fileURLToPath(new URL('./tsconfig.json', import.meta.url))
+    }),
   ],
 };
