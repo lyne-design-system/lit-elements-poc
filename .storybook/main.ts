@@ -16,6 +16,7 @@ const config: StorybookConfig = {
   },
   async webpackFinal(config, { configType }) {
 
+    // Load global css rules into storybook
     config.module?.rules?.push({
       test: /global.scss$/,
       use: [
@@ -25,6 +26,7 @@ const config: StorybookConfig = {
       ],
     })
     
+    // Convert component scss into var field
     config.module?.rules?.push({
       test: /\.css|\.s(c|a)ss$/,
       exclude: [

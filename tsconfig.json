@@ -31,7 +31,11 @@
       ]
     },
     "include": [
-      "./src/**/*",
+      "./src/**/*.ts",
       "node_modules/lit-scss-loader/types.d.ts"
+    ],
+    "exclude": [
+      "./src/**/*.e2e.ts",
+      "./src/**/*.spec.ts"
     ]
   }
