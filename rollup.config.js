@@ -16,7 +16,9 @@ export default {
     resolve({
       browser: true,
     }),
-    typescript(),
+    typescript({
+      tsconfig: './tsconfig.json'
+    }),
     postcss({
       minimize: false,
       inject: false

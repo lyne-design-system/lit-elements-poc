@@ -8,7 +8,7 @@
       "sourceMap": true,
       "inlineSources": true,
       "allowJs": true,
-      "outDir": "./dist",
+      "outDir": "./dist/tsc",
       "rootDir": "./src",
       "moduleResolution": "node",
       "experimentalDecorators": true,
@@ -35,7 +35,7 @@
       "node_modules/lit-scss-loader/types.d.ts"
     ],
     "exclude": [
-      "./src/**/*.e2e.ts",
-      "./src/**/*.spec.ts"
+      "./src/global/**/*.spec.ts",
+      "./src/global/**/*.e2e.ts"
     ]
   }

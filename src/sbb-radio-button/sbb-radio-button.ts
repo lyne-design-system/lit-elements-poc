@@ -24,7 +24,7 @@ const radioButtonObserverConfig: MutationObserverInit = {
  */
 @customElement('sbb-radio-button')
 export class SbbRadioButton extends LitElement {
-  static override styles = Style;
+  // static override styles = Style;
 
   /**
    * Whether the radio can be deselected.
