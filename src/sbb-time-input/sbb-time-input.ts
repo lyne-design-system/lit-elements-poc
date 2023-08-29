@@ -12,7 +12,7 @@ const REGEX_GROUPS_WO_COLON = /([0-9]{1,2})([0-9]{2})/;
 
 @customElement('sbb-time-input')
 export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
-  // static override styles = Style;
+  static override styles = Style;
 
   /** Value for the inner HTMLInputElement. */
   @property() public override get value(): string { return this._value };
@@ -50,7 +50,6 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
 
   /** Applies the correct format to values and triggers event dispatch. */
   private _updateValueAndEmitChange(event: Event): void {
-    debugger;
     this.value = (event.target as HTMLInputElement).value;
     inputElement(this).value = this.value;
     this._emitChange(event);

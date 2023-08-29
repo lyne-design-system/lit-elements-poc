@@ -15,7 +15,7 @@ import Style from './sbb-radio-button-group.scss';
 
 @customElement('sbb-radio-button-group')
 export class SbbRadioButtonGroup extends LitElement {
-  // static override styles = Style;
+  static override styles = Style;
 
   /**
    * Whether the radios can be deselected.
