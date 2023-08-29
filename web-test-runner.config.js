@@ -6,11 +6,11 @@ import { fileURLToPath } from 'url';
 const mode = process.env.MODE || 'dev';
 
 export default {
-  rootDir: '.',
-  files: ['dist/tsc/**/*.spec.js', 'dist/tsc/**/*.e2e.js', '!dist/tsc/global/**/*.js'], // the global folder is temporary excluded until we migrate test
+  rootDir: 'dist/lyne-components',
+  files: ['dist/lyne-components/**/*.spec.js', 'dist/lyne-components/**/*.e2e.js', '!dist/lyne-components/global/**/*.js'], // the global folder is temporary excluded until we migrate test
   groups: [
-    {name: 'spec', files: ['dist/tsc/**/*.spec.js', '!dist/tsc/global/**/*.js']},
-    {name: 'e2e', files: ['dist/tsc/**/*.e2e.js', '!dist/tsc/global/**/*.js']}
+    {name: 'spec', files: ['dist/lyne-components/**/*.spec.js', '!dist/lyne-components/global/**/*.js']},
+    {name: 'e2e', files: ['dist/lyne-components/**/*.e2e.js', '!dist/lyne-components/global/**/*.js']}
   ],
   nodeResolve: true,
   reporters: [
