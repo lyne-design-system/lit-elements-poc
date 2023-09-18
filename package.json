@@ -19,7 +19,9 @@
     "test:e2e:watch": "npm run test:e2e -- --watch",
     "start": "npm run storybook",
     "storybook": "storybook dev -p 6006",
-    "storybook:build": "storybook build"
+    "storybook:build": "storybook build",
+    "vite:build": "vite build",
+    "vitest": "vitest"
   },
   "repository": {
     "type": "git",
@@ -44,6 +46,7 @@
     "@custom-elements-manifest/analyzer": "^0.4.17",
     "@custom-elements-manifest/to-markdown": "^0.1.0",
     "@open-wc/testing": "^3.2.0",
+    "@remcovaes/web-test-runner-vite-plugin": "^1.2.0",
     "@sbb-esta/lyne-design-tokens": "^0.3.5",
     "@storybook/addon-a11y": "^7.0.27",
     "@storybook/addon-actions": "^7.0.27",
@@ -51,20 +54,24 @@
     "@storybook/addon-interactions": "^7.0.27",
     "@storybook/addon-links": "^7.0.27",
     "@storybook/blocks": "^7.0.27",
+    "@storybook/builder-vite": "^7.4.0",
     "@storybook/web-components": "^7.0.27",
+    "@storybook/web-components-vite": "^7.4.0",
     "@storybook/web-components-webpack5": "^7.0.27",
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
+    "@vitest/browser": "^0.34.3",
     "@web/dev-server-esbuild": "^0.4.1",
     "@web/test-runner": "^0.16.1",
     "@web/test-runner-commands": "^0.7.0",
     "@web/test-runner-puppeteer": "^0.13.1",
-    "extract-loader": "^5.1.0",
     "glob": "^8.1.0",
+    "jsdom": "^22.1.0",
     "jsx-dom": "^8.0.7",
     "lit-analyzer": "^1.2.1",
     "lit-scss-loader": "^2.0.1",
     "npm-run-all": "^4.1.5",
+    "playwright": "^1.37.1",
     "postcss": "^8.4.28",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -75,7 +82,10 @@
     "sass": "^1.63.6",
     "sass-loader": "^13.3.2",
     "storybook": "^7.0.27",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "vite": "^4.4.9",
+    "vite-plugin-dts": "^3.5.3",
+    "vitest": "^0.34.3"
   },
   "customElements": "dist/custom-elements.json"
 }

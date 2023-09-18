@@ -2,7 +2,7 @@ import {LitElement, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import { ref } from 'lit/directives/ref.js';
 import { TestController } from './controller';
-import Style from './sbb-element.scss';
+import Style from './sbb-element.scss?lit&inline';
 
 
 /**

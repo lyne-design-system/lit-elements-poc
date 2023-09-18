@@ -1,4 +1,6 @@
-import type { StorybookConfig } from "@storybook/web-components-webpack5";
+import type { StorybookConfig } from "@storybook/web-components-vite";
+import { mergeConfig } from 'vite';
+import { plugins } from '../vite.config';
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|ts|tsx)"],
@@ -8,39 +10,17 @@ const config: StorybookConfig = {
     '@storybook/addon-interactions',
   ],
   framework: {
-    name: "@storybook/web-components-webpack5",
+    name: "@storybook/web-components-vite",
     options: {},
   },
   docs: {
     autodocs: true,
   },
-  async webpackFinal(config, { configType }) {
-
-    // Load global css rules into storybook
-    config.module?.rules?.push({
-      test: /global.scss$/,
-      use: [
-        "style-loader",
-        "css-loader",
-        "sass-loader",
-      ],
+  async viteFinal(config, { configType }) {
+    return mergeConfig(config, {
+      assetsInclude: ['**/*.md'],
+      plugins: [plugins]
     })
-    
-    // Convert component scss into var field
-    config.module?.rules?.push({
-      test: /\.css|\.s(c|a)ss$/,
-      exclude: [
-        /global.scss$/,
-      ],
-      use: [{
-          loader: 'lit-scss-loader',
-          options: {
-              minify: true,
-          },
-      }, 'extract-loader', 'css-loader', 'sass-loader'],
-    })
-    
-    return config;
   },
 };
 export default config;

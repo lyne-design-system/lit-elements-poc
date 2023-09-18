@@ -1,40 +1,46 @@
-import { spread } from '@open-wc/lit-helpers';
-import { LitElement, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import { forwardEventToHost } from '../global/helpers/eventing'; //TODO Investigate why test esbuild fail if the import is from '../global/helpers'
-import { focusInputElement, inputElement } from '../global/helpers/input-element';
-import { FormAssociatedMixin } from '../global/form-associated-mixin';
-import Style from './sbb-time-input.scss';
+import { spread } from "@open-wc/lit-helpers";
+import { LitElement, html } from "lit";
+import { customElement, property } from "lit/decorators.js";
+//TODO Investigate why test esbuild fail if the import is from '../global/helpers'
+import Style from "./sbb-time-input.scss?lit&inline";
+import {
+  FormAssociatedMixin,
+  inputElement,
+  focusInputElement,
+  forwardEventToHost,
+} from "../global";
 
 const REGEX_PATTERN = /[0-9]{3,4}/;
 const REGEX_GROUPS_WITH_COLON = /([0-9]{1,2})?[.:,\-;_hH]?([0-9]{1,2})?/;
 const REGEX_GROUPS_WO_COLON = /([0-9]{1,2})([0-9]{2})/;
 
-@customElement('sbb-time-input')
+@customElement("sbb-time-input")
 export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   static override styles = Style;
 
   /** Value for the inner HTMLInputElement. */
-  @property() public override get value(): string { return this._value };
-  
+  @property() public override get value(): string {
+    return this._value;
+  }
+
   /** Date value with the given time for the inner HTMLInputElement. */
-  @property({attribute: 'value-as-date', type: Object}) // TODO this should not have an attribute probably
-  public get valueAsDate(): Date { 
+  @property({ attribute: "value-as-date", type: Object }) // TODO this should not have an attribute probably
+  public get valueAsDate(): Date {
     const regGroups = this._validateInput(this.value);
     return this._formatValueAsDate(regGroups);
-  };
+  }
 
   /** The <form> element to associate the inner HTMLInputElement with. */
   // @property() public form?: string;
 
   /** Readonly state for the inner HTMLInputElement. */
-  @property({type: Boolean}) public readonly?: boolean = false;
+  @property({ type: Boolean }) public readonly?: boolean = false;
 
   /** Disabled state for the inner HTMLInputElement. */
-  @property({type: Boolean}) public disabled?: boolean = false;
+  @property({ type: Boolean }) public disabled?: boolean = false;
 
   /** Required state for the inner HTMLInputElement. */
-  @property({type: Boolean}) public required?: boolean = false;
+  @property({ type: Boolean }) public required?: boolean = false;
 
   /**
    * @deprecated only used for React. Will probably be removed once React 19 is available.
@@ -45,8 +51,8 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   // @Element() private _element!: HTMLElement;
 
   /** Placeholder for the inner HTMLInputElement.*/
-  private _placeholder = 'HH:MM';
-  private _value: string = '';
+  private _placeholder = "HH:MM";
+  private _value: string = "";
 
   /** Applies the correct format to values and triggers event dispatch. */
   private _updateValueAndEmitChange(event: Event): void {
@@ -67,20 +73,26 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   /** Emits the change event. */
   private _emitChange(event: Event): void {
     forwardEventToHost(event, this);
-    this.dispatchEvent(new Event('did-change', {composed: true, cancelable: true}))
+    this.dispatchEvent(
+      new Event("did-change", { composed: true, cancelable: true })
+    );
   }
 
   /** Returns the right format for the `value` property . */
   private _formatValue(regGroups: RegExpMatchArray): string {
-    if (!regGroups || regGroups.length <= 2 || (!regGroups[1] && !regGroups[2])) {
+    if (
+      !regGroups ||
+      regGroups.length <= 2 ||
+      (!regGroups[1] && !regGroups[2])
+    ) {
       return null;
     }
     if (this._isTimeInvalid(regGroups)) {
       return regGroups[0];
     }
 
-    const hours = (regGroups[1] ?? '').padStart(2, '0');
-    const minutes = (regGroups[2] || '').padStart(2, '0');
+    const hours = (regGroups[1] ?? "").padStart(2, "0");
+    const minutes = (regGroups[2] || "").padStart(2, "0");
     return `${hours}:${minutes}`;
   }
 
@@ -98,7 +110,9 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
       return null;
     }
 
-    return new Date(new Date(0).setHours(+regGroups[1] || 0, +regGroups[2] || 0, 0, 0));
+    return new Date(
+      new Date(0).setHours(+regGroups[1] || 0, +regGroups[2] || 0, 0, 0)
+    );
   }
 
   /** Checks if values of hours and minutes are possible, to avoid non-existent times. */
@@ -125,7 +139,9 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
    *  Using `REGEX_GROUPS_WITH_COLON` permits only to insert 4 numbers, possibly with a valid separator.
    */
   private _preventCharInsert(event: InputEvent): void {
-    const match = (event.target as HTMLInputElement).value.match(REGEX_GROUPS_WITH_COLON);
+    const match = (event.target as HTMLInputElement).value.match(
+      REGEX_GROUPS_WITH_COLON
+    );
     (event.target as HTMLInputElement).value = match ? match[0] : null;
   }
 
@@ -142,7 +158,7 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
     this._value = this._formatValue(regGroups);
 
     this.internals.setFormValue(this._value); // Necessary to be recognized as a native form element
-    this.requestUpdate('value', oldValue);
+    this.requestUpdate("value", oldValue);
   }
 
   // @Watch('valueAsDate')
@@ -159,20 +175,20 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
   }
 
   override render() {
-    this.setAttribute('role', 'input')
-    this.setAttribute('aria-required', this.required?.toString() ?? 'false'); // The "?? 'false'" is redundant in this case
-    this.setAttribute('aria-readonly', (!!this.readonly).toString());         // a cleaner way to have the same behaviour
-    this.setAttribute('aria-disabled', (!!this.disabled).toString());
+    this.setAttribute("role", "input");
+    this.setAttribute("aria-required", this.required?.toString() ?? "false"); // The "?? 'false'" is redundant in this case
+    this.setAttribute("aria-readonly", (!!this.readonly).toString()); // a cleaner way to have the same behaviour
+    this.setAttribute("aria-disabled", (!!this.disabled).toString());
 
     const inputAttributes = {
-      role: 'presentation',
+      role: "presentation",
       disabled: this.disabled || null,
       readonly: this.readonly || null,
       required: this.required || null,
       value: this.value || null,
       placeholder: this._placeholder,
     };
-    
+
     return html`
       <input
         type="text"
@@ -186,6 +202,6 @@ export class SbbTimeInput extends FormAssociatedMixin(LitElement) {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'sbb-time-input': SbbTimeInput;
+    "sbb-time-input": SbbTimeInput;
   }
 }
